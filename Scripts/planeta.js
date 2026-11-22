@@ -132,6 +132,52 @@
     }
   }
 
+  // Trama de puntos sobre la superficie (más brillantes dentro de las zonas)
+  const puntos = [];
+  for (let la = 4.0; la <= 5.45; la += 0.0105) for (let lo = -74.95; lo <= -73.35; lo += 0.0105) {
+    const j = ((la * 977 + lo * 131) % 1) * 0.004;
+    const p = [la + j, lo - j];
+    puntos.push([p, enZona(p)]);
+  }
+
+  // Órbitas alrededor del planeta (fijas en el espacio)
+  const orbitas = [
+    { r: 1.06, inc: 14, nodo: 22, vel: 0.022, fase: 1.2 },
+    { r: 1.1, inc: 22, nodo: -30, vel: -0.018, fase: 2.0 },
+    { r: 1.15, inc: 10, nodo: -8, vel: 0.014, fase: 1.6 },
+    { r: 1.21, inc: 28, nodo: 38, vel: -0.012, fase: 1.9 },
+  ];
+  function orbita(o, a) {
+    let x = Math.cos(a) * o.r, y = Math.sin(a) * o.r, z = 0;
+    const i = o.inc * rad, n = o.nodo * rad;
+    [y, z] = [y * Math.cos(i), y * Math.sin(i)];
+    [x, y] = [x * Math.cos(n) - y * Math.sin(n), x * Math.sin(n) + y * Math.cos(n)];
+    return [CX + x * R, CY - y * R, z];
+  }
+  function dibujaOrbitas(t, frente) {
+    for (const o of orbitas) {
+      ctx.beginPath();
+      let pen = false;
+      for (let k = 0; k <= 240; k++) {
+        const [x, y, z] = orbita(o, (k / 240) * Math.PI * 2);
+        if ((z >= 0) === frente && y < H + 20) { pen ? ctx.lineTo(x, y) : ctx.moveTo(x, y); pen = true; } else pen = false;
+      }
+      ctx.setLineDash([2, 6]);
+      ctx.strokeStyle = frente ? 'rgba(255,255,255,.3)' : 'rgba(255,255,255,.14)';
+      ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
+      const a = o.fase + t * o.vel * Math.PI * 2;
+      const [sx, sy, sz] = orbita(o, a);
+      if ((sz >= 0) !== frente) continue;
+      for (let k = 1; k <= 12; k++) {
+        const [px, py] = orbita(o, a - Math.sign(o.vel) * k * 0.006);
+        ctx.fillStyle = `rgba(${LIMA},${0.55 * (1 - k / 12)})`;
+        ctx.beginPath(); ctx.arc(px, py, 2.4 * (1 - k / 16), 0, 7); ctx.fill();
+      }
+      ctx.fillStyle = `rgb(${LIMA})`; ctx.shadowColor = `rgba(${LIMA},.9)`; ctx.shadowBlur = 10;
+      ctx.beginPath(); ctx.arc(sx, sy, 3.2, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
+    }
+  }
+
   const estrellas = Array.from({ length: 70 }, () => [rnd(), rnd() * 0.3, 0.4 + rnd() * 0.9, rnd() * 4]);
 
   // ---------- Fotograma ----------
@@ -146,6 +192,7 @@
       ctx.fillStyle = `rgba(255,255,255,${0.25 + 0.35 * (0.5 + 0.5 * Math.sin(t * 1.3 + d))})`;
       ctx.beginPath(); ctx.arc(x * W, y * H, r, 0, 7); ctx.fill();
     }
+    dibujaOrbitas(t, false);
     // Atmósfera
     let g = ctx.createRadialGradient(CX, CY, R * 0.97, CX, CY, R * 1.09);
     g.addColorStop(0, 'rgba(140,125,255,.55)'); g.addColorStop(0.4, 'rgba(140,125,255,.18)'); g.addColorStop(1, 'rgba(140,125,255,0)');
@@ -156,10 +203,14 @@
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(CX, CY, R, 0, 7); ctx.fill();
     ctx.strokeStyle = 'rgba(200,190,255,.7)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(CX, CY, R, Math.PI, 0); ctx.stroke();
 
-    // Retícula de la superficie (refuerza la curvatura)
-    ctx.strokeStyle = 'rgba(255,255,255,.06)'; ctx.lineWidth = 1;
-    for (let k = -8; k <= 8; k++) { linea(Array.from({ length: 60 }, (_, i) => [4.1 + i * 0.03, C[1] + k * 0.06])); ctx.stroke(); }
-    for (let k = -6; k <= 14; k++) { linea(Array.from({ length: 60 }, (_, i) => [C[0] + k * 0.05, -74.6 + i * 0.02])); ctx.stroke(); }
+    // Trama de puntos (la "tierra" vista desde arriba)
+    for (const [p, dentro] of puntos) {
+      const [x, y, z] = proj(p);
+      if (z <= 0 || x < -2 || x > W + 2 || y < 0 || y > H + 2) continue;
+      ctx.fillStyle = dentro ? `rgba(220,214,255,${0.18 + z * 0.4})` : `rgba(200,190,255,${0.06 + z * 0.22})`;
+      const sz = dentro ? 1.6 : 1.3;
+      ctx.fillRect(x - sz / 2, y - sz / 2, sz, sz);
+    }
 
     // Zonas
     for (const z of ZONAS) {
@@ -211,6 +262,7 @@
       ctx.fillStyle = '#12092E'; ctx.fillText(z.nombre, x, y + 0.5);
     }
     ctx.textBaseline = 'alphabetic';
+    dibujaOrbitas(t, true);
   }
 
   // ---------- Bucle ----------
