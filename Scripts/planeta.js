@@ -7,7 +7,8 @@
 //
 //  Truco: la zona se "agranda" sobre una esfera para que se vea la
 //  curvatura del planeta y, a la vez, se lean las calles.
-//  Avenidas: trazado aproximado de las vías principales de Bogotá.
+//  Calles: © colaboradores de OpenStreetMap (ODbL), en Scripts/bogota-calles.js.
+//  Si ese archivo no carga, se usa un trazado aproximado de respaldo.
 //  Zonas: los mismos polígonos del mapa de cobertura de esta web.
 //  Se pausa fuera de pantalla y respeta "movimiento reducido".
 // =====================================================================
@@ -23,7 +24,6 @@
   const K = {
     escala: 150,       // cuánto se agranda la zona sobre la esfera (curvatura vs. detalle)
     inclinacion: 44,   // grados que se inclina la vista (más = horizonte más cerca)
-    deriva: 4,         // grados que se mece la vista de lado a lado
     periodo: 40,       // segundos de un vaivén completo
     entregas: 70,      // entregas simultáneas por las calles
   };
@@ -87,25 +87,39 @@
   const tg = 0.1;
   for (let la = 4.47; la <= 4.81; la += 0.0058) corta(Array.from({ length: 140 }, (_, i) => { const lo = -74.30 + i * 0.0021; return [la + (lo + 74.13) * tg * 0.3, lo]; }));
   for (let lo = -74.29; lo <= -74.01; lo += 0.0058) corta(Array.from({ length: 140 }, (_, i) => { const la = 4.46 + i * 0.0026; return [la, lo - (la - 4.65) * tg]; }));
-  const avenidas = AV.map((a) => dens(a));
+  let avenidas = AV.map((a) => dens(a));
+
+  // Calles reales de OpenStreetMap (reemplazan la malla aproximada)
+  const OSM = window.BOGOTA_CALLES;
+  const dec = (arr) => arr.map((f) => { const o = []; for (let i = 0; i < f.length; i += 2) o.push([f[i] / 1e4, f[i + 1] / 1e4]); return o; });
+  const calleLen = (pts) => pts.reduce((s, p, i) => (i ? s + Math.hypot(p[0] - pts[i - 1][0], p[1] - pts[i - 1][1]) : 0), 0);
+  let rutasAv = avenidas, rutasCa = calles;
+  if (OSM) {
+    avenidas = dec(OSM.av);
+    calles.length = 0; calles.push(...dec(OSM.ca));
+    // para las entregas: tramos con algo de recorrido
+    rutasAv = avenidas.filter((p) => calleLen(p) > 0.006);
+    rutasCa = calles.filter((p) => calleLen(p) > 0.004);
+  }
 
   // Entregas: tramos de calles o avenidas, en cualquiera de las tres zonas
   function rng(seed) { return () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646; }
   const rnd = rng(7);
   function nuevaEntrega(t) {
-    const usaAv = rnd() < 0.35;
-    const base = usaAv ? avenidas[Math.floor(rnd() * avenidas.length)] : calles[Math.floor(rnd() * calles.length)];
-    const len = Math.min(base.length - 1, Math.floor((usaAv ? 18 : 6) + rnd() * (usaAv ? 30 : 14)));
-    const start = Math.floor(rnd() * Math.max(1, base.length - len));
-    let tramo = base.slice(start, start + len + 1);
+    const usaAv = rnd() < 0.45;
+    const pool = usaAv ? rutasAv : rutasCa;
+    let tramo = dens(pool[Math.floor(rnd() * pool.length)], 0.0012);
+    if (tramo.length > 60) { const s0 = Math.floor(rnd() * (tramo.length - 60)); tramo = tramo.slice(s0, s0 + 60); }
     if (rnd() < 0.5) tramo = tramo.reverse();
-    return { tramo, t0: t + rnd() * 1.5, dur: 1.6 + rnd() * 2.4 + (usaAv ? 1 : 0), av: usaAv };
+    return { tramo, t0: t + rnd() * 1.5, dur: 1.4 + rnd() * 2 + (usaAv ? 0.8 : 0), av: usaAv };
   }
   let entregas = [];
   const pings = [];
 
   // ---------- Proyección: la zona agrandada sobre una esfera ----------
   let W = 0, H = 0, DPR = 1, R = 0, CX = 0, CY = 0, lon0 = 0, lat0 = 0, sL = 0, cL = 1;
+  const capa = document.createElement('canvas');   // calles, zonas y superficie: se dibujan una vez
+  let capaLista = false;
   function resize() {
     const r = canvas.getBoundingClientRect();
     DPR = Math.min(window.devicePixelRatio || 1, 2);
@@ -114,6 +128,7 @@
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     R = W * 0.92;                     // esfera grande: solo se ve la parte de arriba
     CX = W * 0.5; CY = H * 0.16 + R;  // el horizonte queda cerca del borde superior
+    capaLista = false;
   }
   function proj([la, lo]) {
     const lat = C[0] + (la - C[0]) * K.escala, lon = C[1] + (lo - C[1]) * K.escala;
@@ -180,12 +195,56 @@
 
   const estrellas = Array.from({ length: 70 }, () => [rnd(), rnd() * 0.3, 0.4 + rnd() * 0.9, rnd() * 4]);
 
+  function pintarCapa() {
+    capa.width = Math.round(W * DPR); capa.height = Math.round(H * DPR);
+    const c = capa.getContext('2d');
+    c.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const linea = (pts) => {
+      c.beginPath();
+      let pen = false;
+      for (const p of pts) { const [x, y, z] = proj(p); if (z > 0) { pen ? c.lineTo(x, y) : c.moveTo(x, y); pen = true; } else pen = false; }
+    };
+    // Atmósfera
+    let g = c.createRadialGradient(CX, CY, R * 0.97, CX, CY, R * 1.09);
+    g.addColorStop(0, 'rgba(140,125,255,.55)'); g.addColorStop(0.4, 'rgba(140,125,255,.18)'); g.addColorStop(1, 'rgba(140,125,255,0)');
+    c.fillStyle = g; c.beginPath(); c.arc(CX, CY, R * 1.09, 0, 7); c.fill();
+    // Superficie
+    g = c.createLinearGradient(0, CY - R, 0, H);
+    g.addColorStop(0, '#3A2BB8'); g.addColorStop(0.25, '#2A1F96'); g.addColorStop(1, '#170F5C');
+    c.fillStyle = g; c.beginPath(); c.arc(CX, CY, R, 0, 7); c.fill();
+    c.strokeStyle = 'rgba(200,190,255,.7)'; c.lineWidth = 1.5; c.beginPath(); c.arc(CX, CY, R, Math.PI, 0); c.stroke();
+
+    // Trama de puntos (la "tierra" vista desde arriba)
+    for (const [p, dentro] of puntos) {
+      const [x, y, z] = proj(p);
+      if (z <= 0 || x < -2 || x > W + 2 || y < 0 || y > H + 2) continue;
+      c.fillStyle = dentro ? `rgba(220,214,255,${0.18 + z * 0.4})` : `rgba(200,190,255,${0.06 + z * 0.22})`;
+      const sz = dentro ? 1.6 : 1.3;
+      c.fillRect(x - sz / 2, y - sz / 2, sz, sz);
+    }
+
+    // Zonas
+    for (const z of ZONAS) {
+      linea([...z.coords, z.coords[0]]);
+      c.fillStyle = `rgba(${z.color},.07)`; c.fill();
+      c.setLineDash([6, 5]); c.strokeStyle = `rgba(${z.color},.75)`; c.lineWidth = 1.6; c.stroke(); c.setLineDash([]);
+    }
+    // Calles y avenidas
+    c.strokeStyle = 'rgba(200,190,255,.14)'; c.lineWidth = 0.6;
+    for (const k of calles) { linea(k); c.stroke(); }
+    c.strokeStyle = 'rgba(220,214,255,.26)'; c.lineWidth = 1.1;
+    for (const a of avenidas) { linea(a); c.stroke(); }
+
+    capaLista = true;
+  }
+
   // ---------- Fotograma ----------
   function frame(ms) {
     const t = ms / 1000;
-    lon0 = C[1] + Math.sin((t / K.periodo) * Math.PI * 2) * K.deriva;
+    lon0 = C[1];
     lat0 = C[0] - K.inclinacion;
     sL = Math.sin(lat0 * rad); cL = Math.cos(lat0 * rad);
+    if (!capaLista) pintarCapa();
 
     ctx.clearRect(0, 0, W, H);
     for (const [x, y, r, d] of estrellas) {
@@ -193,36 +252,7 @@
       ctx.beginPath(); ctx.arc(x * W, y * H, r, 0, 7); ctx.fill();
     }
     dibujaOrbitas(t, false);
-    // Atmósfera
-    let g = ctx.createRadialGradient(CX, CY, R * 0.97, CX, CY, R * 1.09);
-    g.addColorStop(0, 'rgba(140,125,255,.55)'); g.addColorStop(0.4, 'rgba(140,125,255,.18)'); g.addColorStop(1, 'rgba(140,125,255,0)');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(CX, CY, R * 1.09, 0, 7); ctx.fill();
-    // Superficie
-    g = ctx.createLinearGradient(0, CY - R, 0, H);
-    g.addColorStop(0, '#3A2BB8'); g.addColorStop(0.25, '#2A1F96'); g.addColorStop(1, '#170F5C');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(CX, CY, R, 0, 7); ctx.fill();
-    ctx.strokeStyle = 'rgba(200,190,255,.7)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(CX, CY, R, Math.PI, 0); ctx.stroke();
-
-    // Trama de puntos (la "tierra" vista desde arriba)
-    for (const [p, dentro] of puntos) {
-      const [x, y, z] = proj(p);
-      if (z <= 0 || x < -2 || x > W + 2 || y < 0 || y > H + 2) continue;
-      ctx.fillStyle = dentro ? `rgba(220,214,255,${0.18 + z * 0.4})` : `rgba(200,190,255,${0.06 + z * 0.22})`;
-      const sz = dentro ? 1.6 : 1.3;
-      ctx.fillRect(x - sz / 2, y - sz / 2, sz, sz);
-    }
-
-    // Zonas
-    for (const z of ZONAS) {
-      linea([...z.coords, z.coords[0]]);
-      ctx.fillStyle = `rgba(${z.color},.07)`; ctx.fill();
-      ctx.setLineDash([6, 5]); ctx.strokeStyle = `rgba(${z.color},.75)`; ctx.lineWidth = 1.6; ctx.stroke(); ctx.setLineDash([]);
-    }
-    // Calles y avenidas
-    ctx.strokeStyle = 'rgba(255,255,255,.16)'; ctx.lineWidth = 0.7;
-    for (const c of calles) { linea(c); ctx.stroke(); }
-    ctx.strokeStyle = 'rgba(255,255,255,.42)'; ctx.lineWidth = 1.6;
-    for (const a of avenidas) { linea(a); ctx.stroke(); }
+    ctx.drawImage(capa, 0, 0, W, H);
 
     // Entregas
     while (entregas.length < K.entregas) entregas.push(nuevaEntrega(t));
@@ -235,7 +265,7 @@
         const [x1, y1, z1] = proj(e.tramo[i]), [x2, y2, z2] = proj(e.tramo[i + 1]);
         if (z1 <= 0 || z2 <= 0) continue;
         ctx.strokeStyle = `rgba(${LIMA},${Math.max(0, (i - tail) / len)})`;
-        ctx.lineWidth = e.av ? 2.6 : 1.8;
+        ctx.lineWidth = e.av ? 3.2 : 2.4;
         ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
       }
       return true;
