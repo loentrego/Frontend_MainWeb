@@ -25,7 +25,7 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 :where(a, button, input, textarea, select):focus-visible { outline: 2.5px solid #B5DB2E; outline-offset: 3px; }
 
 /* ---------- Planeta: globo 3D en canvas (Scripts/planeta.js) ---------- */
-.planeta { display: block; width: clamp(340px, 52vw, 940px); aspect-ratio: 1; height: auto; animation: planeta-in 1.4s cubic-bezier(.2,.8,.2,1) both; }
+.planeta { display: block; width: clamp(340px, 52vw, 940px); aspect-ratio: 1; height: auto; animation: planeta-in .8s cubic-bezier(.2,.8,.2,1) both; }
 /* Bordes suaves: el planeta se "corta" sin líneas rectas */
 .planeta {
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 6%, #000 86%, transparent 100%);

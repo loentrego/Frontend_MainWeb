@@ -7,7 +7,7 @@
 //
 //  Truco: la zona se "agranda" sobre una esfera para que se vea la
 //  curvatura del planeta y, a la vez, se lean las calles.
-//  Calles: © colaboradores de OpenStreetMap (ODbL), en Scripts/bogota-calles.js.
+//  Calles: © colaboradores de OpenStreetMap (ODbL), en Scripts/bogota-calles.json (se descarga aparte).
 //  Si ese archivo no carga, se usa un trazado aproximado de respaldo.
 //  Zonas: los mismos polígonos del mapa de cobertura de esta web.
 //  Se pausa fuera de pantalla y respeta "movimiento reducido".
@@ -90,24 +90,52 @@
     for (const p of pts) { if (enZona(p)) run.push(p); else { if (run.length > 3) calles.push(run); run = []; } }
     if (run.length > 3) calles.push(run);
   };
-  const tg = 0.1;
-  for (let la = 4.47; la <= 4.81; la += 0.0058) corta(Array.from({ length: 140 }, (_, i) => { const lo = -74.30 + i * 0.0021; return [la + (lo + 74.13) * tg * 0.3, lo]; }));
-  for (let lo = -74.29; lo <= -74.01; lo += 0.0058) corta(Array.from({ length: 140 }, (_, i) => { const la = 4.46 + i * 0.0026; return [la, lo - (la - 4.65) * tg]; }));
-  let avenidas = AV.map((a) => dens(a));
+  // Respaldo, solo si no se pueden descargar las calles reales
+  function mallaRespaldo() {
+    const tg = 0.1;
+    for (let la = 4.47; la <= 4.81; la += 0.0058) corta(Array.from({ length: 140 }, (_, i) => { const lo = -74.30 + i * 0.0021; return [la + (lo + 74.13) * tg * 0.3, lo]; }));
+    for (let lo = -74.29; lo <= -74.01; lo += 0.0058) corta(Array.from({ length: 140 }, (_, i) => { const la = 4.46 + i * 0.0026; return [la, lo - (la - 4.65) * tg]; }));
+    avenidas = AV.map((a) => dens(a));
+    rutasAv = avenidas; rutasCa = calles;
+    listo();
+  }
+  let avenidas = [];
+  let OSM = null;
 
   // Calles reales de OpenStreetMap (reemplazan la malla aproximada)
-  const OSM = window.BOGOTA_CALLES;
-  const dec = (arr) => arr.map((f) => { const o = []; for (let i = 0; i < f.length; i += 2) o.push([f[i] / 1e4, f[i + 1] / 1e4]); return o; });
-  const calleLen = (pts) => pts.reduce((s, p, i) => (i ? s + Math.hypot(p[0] - pts[i - 1][0], p[1] - pts[i - 1][1]) : 0), 0);
-  let rutasAv = avenidas, rutasCa = calles, rutasPeriferia = [];
-  if (OSM) {
+  const dec = (arr) => arr.map((f) => {
+    const o = [];
+    let la = 0, lo = 0;
+    for (let i = 0; i < f.length; i += 2) {
+      if (OSM.delta && i) { la += f[i]; lo += f[i + 1]; } else { la = f[i]; lo = f[i + 1]; }
+      o.push([la / 1e4, lo / 1e4]);
+    }
+    return o;
+  });
+  const largos = new WeakMap();   // largo de cada vía, se calcula una sola vez
+  const calleLen = (pts) => {
+    let l = largos.get(pts);
+    if (l === undefined) { l = 0; for (let i = 1; i < pts.length; i++) l += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); largos.set(pts, l); }
+    return l;
+  };
+  // Caja de las zonas: descarta rápido lo que está lejos antes de la prueba fina
+  const enZonaRapido = (p) => p[0] > 4.46 && p[0] < 4.81 && p[1] > -74.29 && p[1] < -74.01 && enZona(p);
+  let rutasAv = [], rutasCa = [], rutasPeriferia = [];
+  function usarOSM(datos) {
+    OSM = datos;
     avenidas = dec(OSM.av);
     calles.length = 0; calles.push(...dec(OSM.ca));
     // para las entregas: tramos con algo de recorrido
     rutasAv = avenidas.filter((p) => calleLen(p) > 0.006);
     rutasCa = calles.filter((p) => calleLen(p) > 0.004);
     // calles de Funza y Soacha: una parte fija de las entregas va allá
-    rutasPeriferia = calles.filter((p) => calleLen(p) > 0.0015 && (pip(p[0], ZONAS[1].coords) || pip(p[0], ZONAS[2].coords)));
+    rutasPeriferia = calles.filter((p) => p[0][1] < -74.13 && calleLen(p) > 0.0015 && (pip(p[0], ZONAS[1].coords) || pip(p[0], ZONAS[2].coords)));
+    listo();
+  }
+  // Con las calles listas: se redibuja la capa y, en un rato libre, se arma la red
+  function listo() {
+    capaLista = false;
+    (window.requestIdleCallback || setTimeout)(armarRed);
   }
 
   // Red de calles: cada vía es una arista y sus extremos son cruces.
@@ -121,11 +149,13 @@
     aristas.set(pts, e);
     for (const [n, ida] of [[e.a, true], [e.b, false]]) { if (!red.has(n)) red.set(n, []); red.get(n).push({ e, ida }); }
   };
-  avenidas.forEach((p) => conecta(p, true));
-  calles.forEach((p) => conecta(p, false));
+  // La red se arma después del primer cuadro, para no retrasar la aparición
+  let redLista = false;
+  const armarRed = () => { avenidas.forEach((p) => conecta(p, true)); calles.forEach((p) => conecta(p, false)); redLista = true; };
   const rumbo = (a, b) => Math.atan2(b[0] - a[0], b[1] - a[1]);
 
   function recorrido(inicio, meta) {
+    if (!redLista) return { ruta: rnd() < 0.5 ? inicio : [...inicio].reverse(), largo: calleLen(inicio), av: rutasAv.includes(inicio) };
     let e = aristas.get(inicio), ida = rnd() < 0.5;
     const ruta = [];
     let largo = 0, av = e.av;
@@ -205,7 +235,11 @@
     s[2] = Math.min(1, cara / K.altura * 1.4);        // se apaga hacia el horizonte
     return s;
   }
+  let ultimo = '';
   function resize() {
+    const clave = canvas.clientWidth + 'x' + canvas.clientHeight + '@' + (window.devicePixelRatio || 1);
+    if (clave === ultimo) return;    // mismo tamaño: no se vuelve a dibujar la capa
+    ultimo = clave;
     DPR = Math.min(window.devicePixelRatio || 1, 2);
     W = canvas.clientWidth; H = canvas.clientHeight;   // tamaño sin la animación de entrada
     canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
@@ -245,7 +279,7 @@
   for (let la = 3.6; la <= 5.7; la += 0.0105) for (let lo = -75.1; lo <= -73.2; lo += 0.0105) {
     const j = ((la * 977 + lo * 131) % 1) * 0.004;
     const p = [la + j, lo - j];
-    puntos.push([p, enZona(p)]);
+    puntos.push([p, enZonaRapido(p)]);
   }
 
   // Órbitas: elipses inclinadas como el horizonte. La mitad de atrás pasa
@@ -370,7 +404,7 @@
     ctx.drawImage(capa, 0, 0, W, H);
 
     // Entregas
-    while (entregas.length < K.entregas) entregas.push(nuevaEntrega(t));
+    while (rutasCa.length && entregas.length < K.entregas) entregas.push(nuevaEntrega(t));
     entregas = entregas.filter((e) => {
       const k = (t - e.t0) / e.dur;
       if (k < 0) return true;
@@ -413,4 +447,9 @@
   document.addEventListener('visibilitychange', kick);
   resize();
   if (reduce) frame(0); else kick();
+  // Las calles llegan aparte: el planeta aparece de una vez y las calles se suman al llegar
+  fetch('Scripts/bogota-calles.json?v=1')
+    .then((r) => (r.ok ? r.json() : Promise.reject()))
+    .then((d) => { usarOSM(d); if (reduce) frame(0); })
+    .catch(() => { mallaRespaldo(); if (reduce) frame(0); });
 })();
