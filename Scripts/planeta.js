@@ -7,7 +7,7 @@
 //
 //  Truco: la zona se "agranda" sobre una esfera para que se vea la
 //  curvatura del planeta y, a la vez, se lean las calles.
-//  Calles: © colaboradores de OpenStreetMap (ODbL), en Scripts/bogota-calles.json (se descarga aparte).
+//  Calles: © colaboradores de OpenStreetMap (ODbL), en Scripts/bogota-calles.txt (se descarga aparte).
 //  Si ese archivo no carga, se usa un trazado aproximado de respaldo.
 //  Zonas: los mismos polígonos del mapa de cobertura de esta web.
 //  Se pausa fuera de pantalla y respeta "movimiento reducido".
@@ -103,15 +103,28 @@
   let OSM = null;
 
   // Calles reales de OpenStreetMap (reemplazan la malla aproximada)
-  const dec = (arr) => arr.map((f) => {
-    const o = [];
-    let la = 0, lo = 0;
-    for (let i = 0; i < f.length; i += 2) {
-      if (OSM.delta && i) { la += f[i]; lo += f[i + 1]; } else { la = f[i]; lo = f[i + 1]; }
-      o.push([la / 1e4, lo / 1e4]);
+  // Formato compacto: una vía por línea, 'A' avenida o 'C' calle, y sus puntos
+  // codificados como "polyline" (diferencias con el punto anterior, en grados/5000).
+  function leerCalles(texto) {
+    const av = [], ca = [];
+    for (const ln of texto.split('\n')) {
+      const tipo = ln[0];
+      if (tipo !== 'A' && tipo !== 'C') continue;
+      const pts = [];
+      let i = 1, la = 0, lo = 0;
+      while (i < ln.length) {
+        for (let k = 0; k < 2; k++) {
+          let r = 0, sh = 0, b;
+          do { b = ln.charCodeAt(i++) - 63; r |= (b & 31) << sh; sh += 5; } while (b >= 32);
+          const v = r & 1 ? ~(r >> 1) : r >> 1;
+          if (k) lo += v; else la += v;
+        }
+        pts.push([la / 5000, lo / 5000]);
+      }
+      (tipo === 'A' ? av : ca).push(pts);
     }
-    return o;
-  });
+    return { av, ca };
+  }
   const largos = new WeakMap();   // largo de cada vía, se calcula una sola vez
   const calleLen = (pts) => {
     let l = largos.get(pts);
@@ -121,10 +134,10 @@
   // Caja de las zonas: descarta rápido lo que está lejos antes de la prueba fina
   const enZonaRapido = (p) => p[0] > 4.46 && p[0] < 4.81 && p[1] > -74.29 && p[1] < -74.01 && enZona(p);
   let rutasAv = [], rutasCa = [], rutasPeriferia = [];
-  function usarOSM(datos) {
-    OSM = datos;
-    avenidas = dec(OSM.av);
-    calles.length = 0; calles.push(...dec(OSM.ca));
+  function usarOSM(texto) {
+    OSM = leerCalles(texto);
+    avenidas = OSM.av;
+    calles.length = 0; calles.push(...OSM.ca);
     // para las entregas: tramos con algo de recorrido
     rutasAv = avenidas.filter((p) => calleLen(p) > 0.006);
     rutasCa = calles.filter((p) => calleLen(p) > 0.004);
@@ -134,7 +147,10 @@
   }
   // Con las calles listas: se redibuja la capa y, en un rato libre, se arma la red
   function listo() {
-    capaLista = false;
+    if (capaLista && HZ) {
+      const c = capa.getContext('2d');
+      c.save(); c.setTransform(DPR, 0, 0, DPR, 0, 0); c.clip(HZ.sup); pintarCalles(c); c.restore();
+    } else capaLista = false;
     (window.requestIdleCallback || setTimeout)(armarRed);
   }
 
@@ -274,13 +290,7 @@
     return out;
   }
 
-  // Trama de puntos sobre la superficie (más brillantes dentro de las zonas)
-  const puntos = [];
-  for (let la = 3.6; la <= 5.7; la += 0.0105) for (let lo = -75.1; lo <= -73.2; lo += 0.0105) {
-    const j = ((la * 977 + lo * 131) % 1) * 0.004;
-    const p = [la + j, lo - j];
-    puntos.push([p, enZonaRapido(p)]);
-  }
+  // Trama de puntos sobre la superficie: se genera al pintar la capa (no se guarda)
 
   // Órbitas: elipses inclinadas como el horizonte. La mitad de atrás pasa
   //  detrás del planeta (solo se ve en el cielo) y la de adelante, por encima.
@@ -326,6 +336,21 @@
 
   const estrellas = Array.from({ length: 90 }, () => [rnd(), rnd() * 0.55, 0.4 + rnd() * 0.9, rnd() * 4]);
 
+  // Calles sobre la capa ya pintada (cuando llegan, no se repinta todo el planeta)
+  function pintarCalles(c) {
+    // todas las vías de un tipo en un solo trazo (mucho más rápido que una por una)
+    const trazo = (lista) => {
+      c.beginPath();
+      for (const pts of lista) {
+        let pen = false;
+        for (const p of pts) { const [x, y, z] = proj(p); if (z > 0) { pen ? c.lineTo(x, y) : c.moveTo(x, y); pen = true; } else pen = false; }
+      }
+      c.stroke();
+    };
+    c.strokeStyle = 'rgba(200,190,255,.24)'; c.lineWidth = 0.6; trazo(calles);
+    c.strokeStyle = 'rgba(220,214,255,.42)'; c.lineWidth = 1.1; trazo(avenidas);
+  }
+
   function pintarCapa() {
     capa.width = Math.round(W * DPR); capa.height = Math.round(H * DPR);
     const c = capa.getContext('2d');
@@ -337,6 +362,7 @@
     };
     // Horizonte y superficie
     const hz = horizonte();
+    let recorte = false;
     if (hz.length > 2) {
       const a = hz[0], b = hz[hz.length - 1];
       const [mx, my] = proj(K.mira);
@@ -358,7 +384,7 @@
       const ang = Math.atan2(Rr[1] - L[1], Rr[0] - L[0]);
       let ox = -Math.sin(ang), oy = Math.cos(ang); if ((mx - L[0]) * ox + (my - L[1]) * oy < 0) { ox = -ox; oy = -oy; }
       const midx = (L[0] + Rr[0]) / 2, midy = (L[1] + Rr[1]) / 2;
-      HZ = { cx: midx + ox * H * 0.14, cy: midy + oy * H * 0.14, ang, cielo };
+      HZ = { cx: midx + ox * H * 0.14, cy: midy + oy * H * 0.14, ang, cielo, sup };
       // atmósfera: halo ancho y una línea fina brillante, como la foto desde la órbita
       const arco = new Path2D();
       hz.forEach(([x, y], i) => (i ? arco.lineTo(x, y) : arco.moveTo(x, y)));
@@ -368,25 +394,24 @@
       c.restore();
       c.strokeStyle = 'rgba(181,219,46,.35)'; c.lineWidth = 6; c.filter = 'blur(4px)'; c.save(); c.translate(-nx * 3, -ny * 3); c.stroke(arco); c.restore(); c.filter = 'none';
       c.strokeStyle = 'rgba(225,220,255,.9)'; c.lineWidth = 2; c.stroke(arco);
-      c.save(); c.clip(sup);
+      c.save(); c.clip(sup); recorte = true;
     }
 
     // Trama de puntos (la "tierra" vista desde arriba)
-    for (const [p, dentro] of puntos) {
+    const p = [0, 0];
+    for (let la = 3.6; la <= 5.7; la += 0.0105) for (let lo = -75.1; lo <= -73.2; lo += 0.0105) {
+      const j = ((la * 977 + lo * 131) % 1) * 0.004;
+      p[0] = la + j; p[1] = lo - j;
       const [x, y, z] = proj(p);
       if (z <= 0 || x < -2 || x > W + 2 || y < 0 || y > H + 2) continue;
+      const dentro = enZonaRapido(p);
       c.fillStyle = dentro ? `rgba(220,214,255,${0.18 + z * 0.4})` : `rgba(200,190,255,${0.06 + z * 0.22})`;
       const sz = dentro ? 1.6 : 1.3;
       c.fillRect(x - sz / 2, y - sz / 2, sz, sz);
     }
 
-    // Calles y avenidas
-    c.strokeStyle = 'rgba(200,190,255,.14)'; c.lineWidth = 0.6;
-    for (const k of calles) { linea(k); c.stroke(); }
-    c.strokeStyle = 'rgba(220,214,255,.26)'; c.lineWidth = 1.1;
-    for (const a of avenidas) { linea(a); c.stroke(); }
-    c.restore();
-
+    pintarCalles(c);
+    if (recorte) c.restore();
     capaLista = true;
   }
 
@@ -448,8 +473,8 @@
   resize();
   if (reduce) frame(0); else kick();
   // Las calles llegan aparte: el planeta aparece de una vez y las calles se suman al llegar
-  fetch('Scripts/bogota-calles.json?v=1')
-    .then((r) => (r.ok ? r.json() : Promise.reject()))
+  fetch('Scripts/bogota-calles.txt?v=1')
+    .then((r) => (r.ok ? r.text() : Promise.reject()))
     .then((d) => { usarOSM(d); if (reduce) frame(0); })
     .catch(() => { mallaRespaldo(); if (reduce) frame(0); });
 })();

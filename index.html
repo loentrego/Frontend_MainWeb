@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LoEntrego - Logística de última milla para tu negocio</title>
     <meta name="description" content="Logística de última milla para tu negocio, con cobertura, peso, medidas y tarifas definidos.">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- El mapa de cobertura está más abajo: su hoja de estilos no frena la primera pantalla -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="Styles/stylesindex.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Nunito:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="IMG/Minilogo-transparencia.png">
     <link rel="stylesheet" href="Styles/upgrade.css?v=7">
-    <link rel="preload" href="Scripts/bogota-calles.json?v=1" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="Scripts/bogota-calles.txt?v=1" as="fetch" crossorigin="anonymous">
     <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -341,9 +344,9 @@
 </div>
 </main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="Scripts/scriptindex.js"></script>
-<script src="Scripts/planeta.js?v=11"></script>
+<script src="Scripts/planeta.js?v=13" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+<script src="Scripts/scriptindex.js" defer></script>
 
 </body>
 </html>
