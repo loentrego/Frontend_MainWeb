@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoEntrego - Logística de última milla para tu negocio</title>
+    <meta name="description" content="Logística de última milla para tu negocio, con cobertura, peso, medidas y tarifas definidos.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <link rel="stylesheet" href="Styles/stylesindex.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Nunito:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="IMG/Minilogo-transparencia.png">
+</head>
+<body>
+
+<header class="header">
+    <a href="index.html" class="logo">
+        <img src="IMG/LoEntrego2026-transparente.png" alt="LoEntrego - Logística de última milla">
+    </a>
+
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+    <label for="menu-toggle" class="menu-btn" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+    </label>
+
+    <nav class="menu">
+        <a href="index.html" class="activo">Inicio</a>
+        <a href="Pages/indexunete.html">Únete</a>
+        <a href="Pages/indexnosotros.html">Nosotros</a>
+        <a href="Pages/indexcontacto.html">Contacto</a>
+    </nav>
+</header>
+
+<!-- CINTA INFINITA -->
+<div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="cinta">
+        <div class="ticker-grupo">
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            
+        </div>
+        <div class="ticker-grupo" aria-hidden="true">
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            
+        </div>
+    </div>
+</div>
+
+<main>
+<div class="fusion-fondo">
+    <div class="luces" aria-hidden="true">
+        <span class="luz l1"></span><span class="luz l2"></span><span class="luz l3"></span>
+        <span class="luz l4"></span><span class="luz l5"></span><span class="luz l6"></span>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-texto">
+            <h1>Entregamos tus pedidos <span>al cliente final</span></h1>
+            <p class="hero-sub">Logística de última milla en nuestras zonas de cobertura, con total transparencia en cada envío.</p>
+            <div class="hero-acciones">
+                <a href="Pages/indexunete.html" class="btn-principal">Registra tu comercio</a>
+                <a href="#condiciones" class="btn-secundario">Ver condiciones</a>
+            </div>
+
+            <ul class="hero-tipos">
+                <li class="tipo t-verde">
+                    <img src="IMG/grandes-almacenes.png" alt="">
+                    <h3>Para empresas</h3>
+                </li>
+                <li class="tipo t-azul">
+                    <img src="IMG/carrito-de-compras.png" alt="">
+                    <h3>Para ecommerce</h3>
+                </li>
+                <li class="tipo t-blanco">
+                    <img src="IMG/edificio-del-gobierno.png" alt="">
+                    <h3>Para sector público</h3>
+                </li>
+            </ul>
+        </div>
+
+        <div class="hero-imagen">
+            <img src="IMG/Minilogo-transparencia.png" alt="Caja LoEntrego" class="caja">
+        </div>
+    </section>
+
+    <!-- CLIENTES -->
+    <section class="clientes">
+        <div class="clientes-encabezado reveal reveal-1">
+            <span class="etiqueta">✦ Nuestras cifras ✦</span>
+            <h2>Nuestra operación <span>en números</span></h2>
+            <div class="linea-acento"></div>
+        </div>
+
+        <div class="stats reveal reveal-2" id="stats">
+            <div class="stat">
+                <div class="num-wrap"><span class="mas">+</span><span class="num" data-target="400">0</span></div>
+                <p>comercios atendidos</p>
+            </div>
+            <div class="stat">
+                <div class="num-wrap"><span class="mas">+</span><span class="num" data-target="50">0</span></div>
+                <p>repartidores</p>
+            </div>
+            <div class="stat">
+                <div class="num-wrap"><span class="mas">+</span><span class="num" data-target="100000">0</span></div>
+                <p>pedidos entregados</p>
+            </div>
+            <div class="stat">
+                <div class="num-wrap"><span class="mas">+</span><span class="num" data-target="10">0</span></div>
+                <p>años de experiencia</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- COBERTURA Y TARIFAS -->
+    <section class="clientes seccion-cobertura" id="condiciones">
+        <div class="clientes-encabezado reveal reveal-1">
+            <span class="etiqueta">✦ Condiciones del servicio ✦</span>
+            <h2>Lo que ofrecemos, <span>sin letra pequeña</span></h2>
+            <div class="linea-acento"></div>
+            <p class="condiciones-intro">Antes de pedir, esto es lo que necesitas saber: dónde entregamos, qué paquetes llevamos y cuánto pagas.</p>
+        </div>
+
+        <div class="cobertura reveal reveal-2" id="cobertura">
+            <div class="condicion-cab">
+                <span class="condicion-num">1</span>
+                <div>
+                    <h3>Dónde entregamos</h3>
+                    <p>Solo entregamos dentro de nuestra zona de cobertura. Elige la zona desde donde despachas para ver tu tarifa.</p>
+                </div>
+            </div>
+            <div class="zona-botones" role="group" aria-label="Elegir zona de cobertura">
+                <button type="button" class="zona-btn activo" data-zona="todas" aria-pressed="true" style="--c:#FFFFFF"><i></i>Toda la zona</button>
+                <button type="button" class="zona-btn" data-zona="bogota" aria-pressed="false" style="--c:#B5DB2E"><i></i>Bogotá</button>
+                <button type="button" class="zona-btn" data-zona="funza" aria-pressed="false" style="--c:#FFD60A"><i></i>Funza</button>
+                <button type="button" class="zona-btn" data-zona="soacha" aria-pressed="false" style="--c:#2DD4F0"><i></i>Soacha</button>
+            </div>
+
+            <div class="cobertura-cuerpo">
+                <div class="cobertura-mapa">
+                    <div class="mapa-marco">
+                        <div class="mapa-circulo" id="mapa-cobertura" role="img" aria-label="Mapa de cobertura: Bogotá, Funza y Soacha"></div>
+                        <div class="mapa-zoom" role="group" aria-label="Zoom del mapa">
+                            <button type="button" id="zoom-menos" aria-label="Alejar mapa" title="Alejar">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>
+                            </button>
+                            <button type="button" id="zoom-mas" aria-label="Acercar mapa" title="Acercar">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="mapa-credito" id="mapa-credito"></p>
+                </div>
+
+                <div class="cobertura-info">
+
+                    <ul class="tarifa-detalles" id="tarifa-detalles">
+                        <li><span class="chk" aria-hidden="true">✓</span><span>Pagas la tarifa de tu zona de despacho, entregues dentro o fuera de ella.</span></li>
+                        <li id="recargo-item" hidden><span class="chk" aria-hidden="true">+</span><span id="recargo-texto"></span></li>
+                        <li><span class="chk" aria-hidden="true">★</span><span>¿Envías muchos paquetes al mes? Acuerda tarifas especiales escribiendo a <a href="mailto:ventas@loentrego.com" title="ventas@loentrego.com">ventas</a>.</span></li>
+                    </ul>
+
+                    <div class="tarifa" id="tarifa">
+                        <span class="tarifa-etiqueta" id="tarifa-etiqueta">Tarifa por entrega</span>
+                        <div class="tarifa-valor" id="tarifa-valor">$10.000</div>
+                        <p class="tarifa-nota" id="tarifa-nota">COP por entrega</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- CONDICIÓN 2: PESO Y TAMAÑO. AJUSTA los valores de ejemplo a los reales de LoEntrego -->
+        <div class="cobertura condicion-paquete reveal reveal-3" id="paquete">
+            <div class="condicion-cab">
+                <span class="condicion-num">2</span>
+                <div>
+                    <h3>Qué paquetes llevamos</h3>
+                    <p>Cada paquete debe estar dentro de estos límites.</p>
+                </div>
+            </div>
+
+            <div class="paquete-cuerpo">
+                <svg class="cubo" viewBox="0 0 340 230" role="img" aria-label="Medidas máximas del paquete: largo 40 cm, ancho 30 cm, alto 30 cm">
+                    <!-- Caja en perspectiva. AJUSTA los textos de las etiquetas si cambian las medidas -->
+                    <g fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-dasharray="4 4" stroke-linecap="round">
+                        <path d="M85 162.5 L171.6 112.5 L236.6 150"/><path d="M171.6 112.5 L171.6 37.5"/>
+                    </g>
+                    <g stroke="rgba(255,255,255,.6)" stroke-width="1.5" stroke-linejoin="round">
+                        <path d="M150 125 L236.6 75 L171.6 37.5 L85 87.5 Z" fill="rgba(181,219,46,.22)"/>
+                        <path d="M150 200 L85 162.5 L85 87.5 L150 125 Z" fill="rgba(255,255,255,.08)"/>
+                        <path d="M150 200 L236.6 150 L236.6 75 L150 125 Z" fill="rgba(255,255,255,.15)"/>
+                    </g>
+                    <g fill="none" stroke-width="4" stroke-linecap="round">
+                        <path d="M150 200 L236.6 150" stroke="#B5DB2E"/>
+                        <path d="M150 200 L85 162.5" stroke="#FF8A1F"/>
+                        <path d="M236.6 150 L236.6 75" stroke="#2DD4F0"/>
+                    </g>
+                    <g font-family="Poppins, sans-serif" font-size="12" font-weight="600" fill="#fff" text-anchor="middle">
+                        <rect x="167" y="181" width="88" height="24" rx="12" fill="rgba(18,12,82,.85)" stroke="#B5DB2E"/>
+                        <text x="211" y="197">Largo 40 cm</text>
+                        <rect x="30" y="187" width="88" height="24" rx="12" fill="rgba(18,12,82,.85)" stroke="#FF8A1F"/>
+                        <text x="74" y="203">Ancho 30 cm</text>
+                        <rect x="247" y="100" width="88" height="24" rx="12" fill="rgba(18,12,82,.85)" stroke="#2DD4F0"/>
+                        <text x="291" y="116">Alto 30 cm</text>
+                    </g>
+                </svg>
+
+                <div class="limites">
+                    <div class="limite">
+                        <span class="limite-etiqueta">Peso máximo</span>
+                        <div class="limite-valor">5<small>kg</small></div>
+                        <p>por paquete</p>
+                    </div>
+                    <div class="limite">
+                        <span class="limite-etiqueta">Medidas máximas</span>
+                        <div class="limite-valor">40×30×30<small>cm</small></div>
+                        <p>largo × ancho × alto</p>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="tarifa-detalles cond-detalles">
+                <li><span class="chk" aria-hidden="true">✓</span><span>Dentro de estos límites pagas solo la tarifa de tu zona de despacho.</span></li>
+                <li><span class="chk" aria-hidden="true">!</span><span>No transportamos paquetes que superen estos límites.</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <footer class="footer">
+    <div class="footer-contenido">
+        <div class="footer-col marca">
+            <img src="IMG/LoEntrego2026-transparente.png" alt="LoEntrego" class="footer-logo">
+            <p>Logística de última milla para empresas, ecommerce y sector público.</p>
+            <div class="redes">
+                <a href="https://instagram.com" aria-label="Instagram" class="red r-ig"><img src="IMG/instagram.png" alt=""></a>
+                <a href="https://facebook.com" aria-label="Facebook" class="red r-fb"><img src="IMG/facebook.png" alt=""></a>
+                <a href="https://linkedin.com" aria-label="LinkedIn" class="red r-in"><img src="IMG/whatsapp.png" alt=""></a>
+            </div>
+        </div>
+
+        <div class="footer-col">
+            <h3>Navegación</h3>
+            <ul class="nav-footer-lista">
+                <li><a href="index.html"><span class="flecha-mini">›</span>Inicio</a></li>
+                <li><a href="Pages/indexunete.html"><span class="flecha-mini">›</span>Únete</a></li>
+                <li><a href="Pages/indexnosotros.html"><span class="flecha-mini">›</span>Nosotros</a></li>
+                <li><a href="Pages/indexcontacto.html"><span class="flecha-mini">›</span>Contacto</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h3>Contacto</h3>
+            <ul class="contacto">
+                <li class="contacto-item">
+                    <span class="icono-contacto"><img src="IMG/correo.png" alt="Correo"></span>
+                    <span class="contacto-texto">contacto@loentrego.com</span>
+                    <button type="button" class="btn-copiar" data-copiar="contacto@loentrego.com" aria-label="Copiar correo" title="Copiar">
+                        <svg class="ico-copiar" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+                        <svg class="ico-ok" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    </button>
+                </li>
+                <li class="contacto-item">
+                    <span class="icono-contacto"><img src="IMG/telefono.png" alt="Teléfono"></span>
+                    <span class="contacto-texto">310 123 4567</span>
+                    <button type="button" class="btn-copiar" data-copiar="310 123 4567" aria-label="Copiar teléfono" title="Copiar">
+                        <svg class="ico-copiar" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+                        <svg class="ico-ok" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    </button>
+                </li>
+                <li class="contacto-item">
+                    <span class="icono-contacto"><img src="IMG/pin.png" alt="Ubicación"></span>
+                    <span class="contacto-texto">Bogotá, Colombia</span>
+                    <button type="button" class="btn-copiar" data-copiar="Bogotá, Colombia" aria-label="Copiar ubicación" title="Copiar">
+                        <svg class="ico-copiar" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+                        <svg class="ico-ok" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    </button>
+                </li>
+            </ul>
+        </div>  
+    </div>
+
+    <div class="footer-legal">
+        <a href="#">Políticas de privacidad</a>
+        <span>© 2026 LoEntrego. Todos los derechos reservados.</span>
+        <a href="#">Términos y condiciones</a>
+    </div>
+</footer>
+
+</div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="Scripts/scriptindex.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Únete - LoEntrego | Seamos aliados</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <link rel="stylesheet" href="../Styles/stylesindex.css">
+    <link rel="stylesheet" href="../Styles/Stylesunete.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Nunito:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="../IMG/Minilogo-transparencia.png">
+</head>
+<body>
+
+<header class="header">
+    <a href="../index.html" class="logo">
+        <img src="../IMG/LoEntrego2026-transparente.png" alt="LoEntrego - Logística de última milla">
+    </a>
+
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+    <label for="menu-toggle" class="menu-btn" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+    </label>
+
+    <nav class="menu">
+        <a href="../index.html">Inicio</a>
+        <a href="../Pages/indexunete.html" class="activo">Únete</a>
+        <a href="../Pages/indexnosotros.html">Nosotros</a>
+        <a href="../Pages/indexcontacto.html">Contacto</a>
+    </nav>
+</header>
+
+<!-- CINTA INFINITA -->
+<div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="cinta">
+        <div class="ticker-grupo">
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            
+        </div>
+        <div class="ticker-grupo" aria-hidden="true">
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            <span>Logística de última milla</span><i>●</i><span>Entrega rápida</span><i>●</i><span>Condiciones claras</span><i>●</i><span>Sin letra pequeña</span><i>●</i><span>Envíos a Bogotá y a sus alrededores</span><i>●</i>
+            
+        </div>
+    </div>
+</div>
+
+<main>
+<div class="fusion-fondo-unete">
+    <div class="luces" aria-hidden="true">
+        <span class="luz l1"></span><span class="luz l2"></span><span class="luz l3"></span>
+        <span class="luz l4"></span><span class="luz l5"></span><span class="luz l6"></span>
+    </div>
+
+    <section class="hero-unete">
+        <div class="unete-contenedor">
+
+            <div class="unete-intro reveal reveal-1">
+                <span class="etiqueta">Aliados LoEntrego</span>
+                <h1>Conversemos y <span>crezcamos juntos</span></h1>
+                <p class="unete-sub">Cuéntanos cómo funciona tu comercio y armamos juntos la mejor forma de llevar tus pedidos.</p>
+
+                <!-- SLIDER: cobertura y tarifa  →  tamaño máximo por paquete -->
+                <div class="mini-slider" id="mini-slider" role="region" aria-roledescription="carrusel" aria-label="Cobertura, tarifa y tamaño de paquete">
+                    <div class="ms-pistas">
+
+                        <!-- Slide 1: cobertura y tarifa -->
+                        <div class="ms-slide activo" aria-hidden="false">
+                            <div class="ms-cab">
+                                <span class="mc-titulo">Cobertura y tarifa</span>
+                                <div class="mc-chips" role="group" aria-label="Elegir zona de cobertura">
+                                    <button type="button" class="mc-chip activo" data-zona="todas" aria-pressed="true"><i></i>Todas</button>
+                                    <button type="button" class="mc-chip" data-zona="bogota" aria-pressed="false"><i></i>Bogotá</button>
+                                    <button type="button" class="mc-chip" data-zona="funza" aria-pressed="false"><i></i>Funza</button>
+                                    <button type="button" class="mc-chip" data-zona="soacha" aria-pressed="false"><i></i>Soacha</button>
+                                </div>
+                            </div>
+
+                            <div class="ms-cuerpo">
+                                <div class="mc-mapa-wrap">
+                                    <div class="mc-mapa" id="mc-mapa" role="img" aria-label="Mapa de cobertura: Bogotá, Funza y Soacha"></div>
+                                </div>
+
+                                <div class="mc-tarifa" id="mc-tarifa">
+                                    <span class="mc-etiqueta" id="mc-etiqueta">Tarifa promedio</span>
+                                    <div class="mc-linea">
+                                        <strong class="mc-valor" id="mc-valor">$10.000</strong>
+                                        <span class="mc-nota" id="mc-nota">COP por entrega</span>
+                                    </div>
+                                    <p class="mc-recargo" id="mc-recargo" hidden></p>
+                                    <p class="mc-volumen">★ Mejores tarifas por volumen</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 2: tamaño máximo por paquete (edita las medidas aquí) -->
+                        <div class="ms-slide" aria-hidden="true">
+                            <div class="ms-cab">
+                                <span class="mc-titulo">Tamaño máximo por paquete</span>
+                            </div>
+
+                            <div class="ms-cuerpo ms-paquete">
+                                <div class="mp-caja">
+                                    <svg viewBox="20 28 325 195" role="img" aria-label="Medidas máximas del paquete: largo 50 cm, ancho 40 cm, alto 40 cm">
+                                        <!-- Caja en perspectiva. Si cambian las medidas, edita los textos de las etiquetas -->
+                                        <g fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-dasharray="4 4" stroke-linecap="round">
+                                            <path d="M85 162.5 L171.6 112.5 L236.6 150"/><path d="M171.6 112.5 L171.6 37.5"/>
+                                        </g>
+                                        <g stroke="rgba(255,255,255,.6)" stroke-width="1.5" stroke-linejoin="round">
+                                            <path d="M150 125 L236.6 75 L171.6 37.5 L85 87.5 Z" fill="rgba(181,219,46,.22)"/>
+                                            <path d="M150 200 L85 162.5 L85 87.5 L150 125 Z" fill="rgba(255,255,255,.08)"/>
+                                            <path d="M150 200 L236.6 150 L236.6 75 L150 125 Z" fill="rgba(255,255,255,.15)"/>
+                                        </g>
+                                        <g fill="none" stroke-width="4" stroke-linecap="round">
+                                            <path d="M150 200 L236.6 150" stroke="#B5DB2E"/>
+                                            <path d="M150 200 L85 162.5" stroke="#FF8A1F"/>
+                                            <path d="M236.6 150 L236.6 75" stroke="#2DD4F0"/>
+                                        </g>
+                                        <g font-family="Poppins, sans-serif" font-size="12" font-weight="600" fill="#fff" text-anchor="middle">
+                                            <rect x="167" y="181" width="88" height="24" rx="12" fill="rgba(18,12,82,.85)" stroke="#B5DB2E"/>
+                                            <text x="211" y="197">Largo 50 cm</text>
+                                            <rect x="30" y="187" width="88" height="24" rx="12" fill="rgba(18,12,82,.85)" stroke="#FF8A1F"/>
+                                            <text x="74" y="203">Ancho 40 cm</text>
+                                            <rect x="247" y="100" width="88" height="24" rx="12" fill="rgba(18,12,82,.85)" stroke="#2DD4F0"/>
+                                            <text x="291" y="116">Alto 40 cm</text>
+                                        </g>
+                                    </svg>
+                                </div>
+
+                                <div class="mp-peso">
+                                    <span>Peso máximo</span>
+                                    <strong>15<small>kg</small></strong>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="ms-puntos" role="group" aria-label="Elegir diapositiva">
+                        <button type="button" class="ms-punto activo" aria-label="Cobertura y tarifa" aria-current="true"></button>
+                        <button type="button" class="ms-punto" aria-label="Tamaño máximo por paquete" aria-current="false"></button>
+                    </div>
+                </div>
+                <p class="mc-credito" id="mc-credito"></p>
+            </div>
+
+            <div class="unete-formulario reveal reveal-2">
+                <div class="tarjeta-form">
+                    <h3>Datos del comercio</h3>
+
+                    <div class="mensaje-info">
+                        <span class="icono-info">i</span>
+                        <p>Con estos datos entendemos tu operación y te escribimos en menos de 48 horas para empezar a trabajar juntos.</p>
+                    </div>
+
+                    <form id="form">
+                        <div class="campo">
+                            <label for="comercio">Nombre del comercio</label>
+                            <input id="comercio" name="comercio" placeholder="Ej. Panadería El Buen Pan" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="ubicacion">Ubicación de despacho</label>
+                            <input id="ubicacion" name="ubicacion" type="text" autocomplete="street-address" placeholder="Ej. Cra 15 # 80-20, Bogotá" required>
+                        </div>
+
+                        <div class="fila-doble">
+                            <div class="campo">
+                                <label for="celular">Número de celular</label>
+                                <input id="celular" name="celular" type="tel" placeholder="310 000 0000" required>
+                            </div>
+                            <div class="campo">
+                                <label for="pedidosdiarios"># Pedidos al día</label>
+                                <input id="pedidosdiarios" name="pedidosdiarios" type="number" min="0" placeholder="Ej. 20" required class="sin-flechas">
+                            </div>
+                        </div>
+
+                        <div class="campo">
+                            <label for="mensaje">Mensaje (opcional)</label>
+                            <textarea id="mensaje" name="mensaje" rows="3" placeholder="Cuéntanos qué vendes, a dónde entregas o cualquier detalle útil"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-solicitud">
+                            <span class="texto-btn">Quiero ser aliado</span>
+                            <span class="spinner" aria-hidden="true"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="footer">
+    <div class="footer-contenido">
+        <div class="footer-col marca">
+            <img src="../IMG/LoEntrego2026-transparente.png" alt="LoEntrego" class="footer-logo">
+            <p>Logística de última milla para empresas, ecommerce y sector público.</p>
+            <div class="redes">
+                <a href="https://instagram.com" aria-label="Instagram" class="red r-ig"><img src="../IMG/instagram.png" alt=""></a>
+                <a href="https://facebook.com" aria-label="Facebook" class="red r-fb"><img src="../IMG/facebook.png" alt=""></a>
+                <a href="https://linkedin.com" aria-label="LinkedIn" class="red r-in"><img src="../IMG/whatsapp.png" alt=""></a>
+            </div>
+        </div>
+
+        <div class="footer-col">
+            <h3>Navegación</h3>
+            <ul class="nav-footer-lista">
+                <li><a href="../index.html"><span class="flecha-mini">›</span>Inicio</a></li>
+                <li><a href="../Pages/indexunete.html"><span class="flecha-mini">›</span>Únete</a></li>
+                <li><a href="../Pages/indexnosotros.html"><span class="flecha-mini">›</span>Nosotros</a></li>
+                <li><a href="../Pages/indexcontacto.html"><span class="flecha-mini">›</span>Contacto</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h3>Contacto</h3>
+            <ul class="contacto">
+                <li class="contacto-item">
+                    <span class="icono-contacto"><img src="../IMG/correo.png" alt="Correo"></span>
+                    <span class="contacto-texto">contacto@loentrego.com</span>
+                    <button type="button" class="btn-copiar" data-copiar="contacto@loentrego.com" aria-label="Copiar correo" title="Copiar">
+                        <svg class="ico-copiar" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+                        <svg class="ico-ok" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    </button>
+                </li>
+                <li class="contacto-item">
+                    <span class="icono-contacto"><img src="../IMG/telefono.png" alt="Teléfono"></span>
+                    <span class="contacto-texto">310 123 4567</span>
+                    <button type="button" class="btn-copiar" data-copiar="310 123 4567" aria-label="Copiar teléfono" title="Copiar">
+                        <svg class="ico-copiar" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+                        <svg class="ico-ok" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    </button>
+                </li>
+                <li class="contacto-item">
+                    <span class="icono-contacto"><img src="../IMG/pin.png" alt="Ubicación"></span>
+                    <span class="contacto-texto">Bogotá, Colombia</span>
+                    <button type="button" class="btn-copiar" data-copiar="Bogotá, Colombia" aria-label="Copiar ubicación" title="Copiar">
+                        <svg class="ico-copiar" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+                        <svg class="ico-ok" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-legal">
+        <a href="#">Políticas de privacidad</a>
+        <span>© 2026 LoEntrego. Todos los derechos reservados.</span>
+        <a href="#">Términos y condiciones</a>
+    </div>
+</footer>
+
+</div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="../Scripts/scriptUnete.js"></script>
+
+</body>
+</html>

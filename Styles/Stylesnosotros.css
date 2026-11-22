@@ -1,0 +1,447 @@
+/* =========================================================
+   Estilos exclusivos de Nosotros.html
+   (usa las variables y clases compartidas de stylesindex.css:
+   header, ticker, luces, reveal, etiqueta, linea-acento,
+   botones y footer)
+   ========================================================= */
+
+/* ===== Fusión: intro + manifiesto + comparativa + footer ===== */
+.fusion-fondo-nosotros {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg,
+        var(--azul) 0%,
+        var(--azul-oscuro) 10%,
+        var(--oscuro-fusion) 24%,
+        #1E1690 40%,
+        #2B1FB0 58%,
+        #2A1C9C 76%,
+        #1B1370 92%,
+        var(--azul-oscuro) 100%);
+}
+
+.fusion-fondo-nosotros > section,
+.fusion-fondo-nosotros > footer {
+    position: relative;
+    z-index: 1;
+    background: transparent;
+}
+
+/* Encabezado reutilizable de cada sección */
+.seccion-encabezado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 50px;
+}
+
+/* Movimiento del fondo (las luces vienen de stylesindex.css; aquí solo
+   se les agrega la animación para esta página) */
+.fusion-fondo-nosotros .luz {
+    animation: flotarNosotros 16s ease-in-out infinite;
+}
+.fusion-fondo-nosotros .luz.l1 { animation-duration: 18s; }
+.fusion-fondo-nosotros .luz.l2 { animation-duration: 14s; animation-delay: -3s; }
+.fusion-fondo-nosotros .luz.l3 { animation-duration: 20s; animation-delay: -7s; }
+.fusion-fondo-nosotros .luz.l4 { animation-duration: 15s; animation-delay: -5s; }
+.fusion-fondo-nosotros .luz.l5 { animation-duration: 19s; animation-delay: -9s; }
+.fusion-fondo-nosotros .luz.l6 { animation-duration: 13s; animation-delay: -2s; }
+
+@keyframes flotarNosotros {
+    0%   { transform: translate(0, 0) scale(1); }
+    25%  { transform: translate(40px, -30px) scale(1.08); }
+    50%  { transform: translate(-20px, 25px) scale(.95); }
+    75%  { transform: translate(30px, 20px) scale(1.05); }
+    100% { transform: translate(0, 0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fusion-fondo-nosotros .luz { animation: none; }
+}
+
+.seccion-encabezado h2 {
+    margin: 0;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--blanco);
+}
+
+.seccion-encabezado h2 span {
+    background: linear-gradient(90deg, var(--verde), var(--naranja));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ===== Intro ===== */
+.nosotros-intro {
+    display: flex;
+    justify-content: center;
+    padding: 110px 8% 70px;
+    color: var(--blanco);
+}
+
+.intro-contenido {
+    max-width: 760px;
+    text-align: center;
+}
+
+.intro-contenido h1 {
+    font-size: clamp(38px, 5.5vw, 64px);
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0 0 20px;
+}
+
+.intro-contenido h1 span { color: var(--verde); }
+
+.intro-sub {
+    font-size: 19px;
+    line-height: 1.6;
+    opacity: .9;
+    margin: 0 0 34px;
+}
+
+/* ===== Trayectoria: tarjeta por año con resumen y cifras de cierre ===== */
+.trayectoria { padding: 30px 8% 100px; }
+
+.años-grid {
+    display: flex;
+    align-items: stretch;
+    gap: 20px;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.año-card {
+    perspective: 1400px;
+    height: 400px;
+    flex: 1 1 0;
+    min-width: 0;
+    transition: flex-grow .55s cubic-bezier(.4, .2, .2, 1),
+                height .55s cubic-bezier(.4, .2, .2, 1),
+                opacity .4s ease;
+}
+
+/* Al activar una tarjeta, ella crece y ocupa el protagonismo... */
+.año-card.expandida {
+    flex-grow: 2.3;
+}
+
+/* ...mientras las demás se comprimen y ceden espacio */
+.año-card.comprimida {
+    flex-grow: .5;
+    opacity: .55;
+}
+
+.año-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    transition: transform .6s cubic-bezier(.4, .2, .2, 1);
+    transform-style: preserve-3d;
+}
+
+.año-card.expandida .año-card-inner {
+    transform: rotateY(180deg);
+}
+
+.año-frente,
+.año-reverso {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 22px;
+    color: var(--blanco);
+    overflow: hidden;
+}
+
+.año-frente {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, .12);
+    background:
+        radial-gradient(120% 140% at 50% 0%, rgba(181, 219, 46, .16), transparent 60%),
+        rgba(255, 255, 255, .05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: border-color .3s ease, background .3s ease;
+}
+
+.año-card:not(.comprimida) .año-frente:hover {
+    border-color: rgba(181, 219, 46, .45);
+}
+
+.año-num-grande {
+    font-size: clamp(30px, 3.6vw, 50px);
+    font-weight: 700;
+    color: var(--verde);
+    line-height: 1;
+    transition: font-size .4s ease;
+}
+
+.año-card.comprimida .año-num-grande {
+    font-size: clamp(20px, 2.2vw, 30px);
+}
+
+.año-frente::after {
+    content: '';
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .08);
+    border: 1px solid rgba(255, 255, 255, .18);
+    display: flex;
+}
+
+.año-card.comprimida .año-frente::after { display: none; }
+
+.año-reverso {
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    padding: 26px 26px 22px;
+    background: linear-gradient(160deg, rgba(181, 219, 46, .16), rgba(255, 255, 255, .05) 55%);
+    border: 1px solid rgba(181, 219, 46, .5);
+    box-shadow: 0 20px 50px -20px rgba(0, 0, 0, .5);
+}
+
+.año-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    align-self: flex-start;
+    padding: 5px 14px;
+    border-radius: 20px;
+    background: var(--verde);
+    color: var(--azul-oscuro);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    margin-bottom: 14px;
+}
+
+.año-resumen {
+    margin: 0 0 14px;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, .88);
+    max-width: 62ch;
+}
+
+.año-hitos {
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.año-hitos li {
+    position: relative;
+    padding-left: 20px;
+    font-size: 13.5px;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, .78);
+}
+
+.año-hitos li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    top: 1px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--verde);
+    color: var(--azul-oscuro);
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.año-cifras {
+    display: flex;
+    gap: 22px;
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, .16);
+}
+
+.cifra {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.cifra-icono {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    background: rgba(255, 255, 255, .12);
+    border: 1px solid rgba(255, 255, 255, .16);
+}
+
+.ic-comercios { background: rgba(255, 152, 66, .18); border-color: rgba(255, 152, 66, .4); }
+.ic-pedidos   { background: rgba(181, 219, 46, .2); border-color: rgba(181, 219, 46, .45); }
+.ic-repartidores { background: rgba(94, 170, 255, .2); border-color: rgba(94, 170, 255, .4); }
+
+.cifra-texto {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.cifra-num {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--blanco);
+    line-height: 1.1;
+}
+
+.cifra-label {
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, .65);
+    letter-spacing: .2px;
+    white-space: nowrap;
+}
+
+/* ===== Comparativa: logística tradicional vs LoEntrego ===== */
+.comparativa { padding: 20px 8% 110px; }
+
+.tabla-comparativa {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 980px;
+    margin: 0 auto;
+    border-radius: 26px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .12);
+}
+
+.col-cabecera {
+    padding: 22px 24px;
+    font-size: 17px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.col-mala {
+    background: rgba(255, 87, 87, .12);
+    color: rgba(255, 255, 255, .75);
+}
+
+.col-buena {
+    background: linear-gradient(135deg, var(--verde), var(--verde-oscuro));
+    color: var(--azul-oscuro);
+}
+
+.fila-rotulo {
+    grid-column: 1 / -1;
+    padding: 16px 24px 4px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .5);
+    background: rgba(255, 255, 255, .03);
+    border-top: 1px solid rgba(255, 255, 255, .08);
+}
+
+.celda {
+    padding: 18px 24px 22px;
+    font-size: 15px;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: var(--blanco);
+}
+
+.celda.mala {
+    background: rgba(255, 87, 87, .06);
+    opacity: .85;
+}
+
+.celda.buena {
+    background: rgba(181, 219, 46, .08);
+    font-weight: 500;
+}
+
+.icono-x, .icono-check {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+.icono-x { background: rgba(255, 87, 87, .25); color: #FF8A8A; }
+.icono-check { background: var(--verde); color: var(--azul-oscuro); }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+    .nosotros-intro { padding: 90px 6% 60px; }
+    .manifiesto { padding: 70px 6% 90px; }
+    .trayectoria, .comparativa { padding-left: 6%; padding-right: 6%; }
+
+    .años-grid { flex-wrap: wrap; }
+    .año-card { flex: 1 1 calc(50% - 10px); height: 400px; }
+    .año-card.expandida { flex: 1 1 100%; order: -1; }
+    .año-card.comprimida { flex: 1 1 calc(50% - 10px); }
+
+    .tabla-comparativa { grid-template-columns: 1fr 1fr; }
+    .col-cabecera { font-size: 14px; padding: 16px 12px; }
+    .celda { padding: 14px 14px 18px; font-size: 13.5px; }
+    .fila-rotulo { padding: 14px 14px 2px; font-size: 11.5px; }
+}
+
+@media (max-width: 560px) {
+    .años-grid { flex-direction: column; }
+    .año-card,
+    .año-card.expandida,
+    .año-card.comprimida { flex: 1 1 auto; }
+    .año-card { height: 300px; }
+    .año-card.expandida { height: 500px; order: 0; }
+    .año-card.comprimida { height: 90px; opacity: .6; }
+    .año-card.comprimida .año-frente { flex-direction: row; gap: 12px; }
+    .año-card.comprimida .año-frente::after { display: none; }
+
+    .tabla-comparativa { grid-template-columns: 1fr; }
+    .col-cabecera:first-child { border-bottom: 1px solid rgba(255,255,255,.1); }
+    .fila-rotulo { grid-column: 1; }
+    .celda.mala, .celda.buena { grid-column: 1; }
+}
+
+@media (max-width: 400px) {
+    .año-cifras { flex-direction: column; gap: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .año-card-inner,
+    .año-card { transition: none; }
+}

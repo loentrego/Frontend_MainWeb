@@ -1,0 +1,234 @@
+/* ===== Página de contacto (se apoya en stylesindex.css) ===== */
+
+.contacto-seccion { padding: 50px 0 70px; }
+
+.contacto-sub {
+    max-width: 560px;
+    margin: 14px 0 0;
+    font-size: 16px;
+    line-height: 1.55;
+    opacity: .85;
+}
+
+.contacto-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 28px;
+    align-items: stretch;
+    width: calc(100% - 16%);
+    max-width: 1040px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.col-izq, .col-der { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+
+/* Tarjeta de vidrio común */
+.bloque, .mapa-card, .redes-card, .cta-union {
+    border-radius: 26px;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid rgba(255, 255, 255, .12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .25);
+}
+
+.bloque { padding: 22px 22px 20px; }
+.col-izq .bloque { flex: 1; display: flex; flex-direction: column; }
+.bloque-titulo { margin: 0 0 16px; font-size: 18px; font-weight: 700; color: var(--blanco); }
+
+/* ---------- WhatsApp ---------- */
+.wa-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 22px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, var(--verde), var(--verde-oscuro));
+    color: var(--azul-oscuro);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .25);
+    transition: transform .2s, box-shadow .2s;
+}
+.wa-card:hover { transform: translateY(-3px); box-shadow: 0 16px 34px rgba(0, 0, 0, .32); }
+
+.wa-icono {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: rgba(27, 19, 112, .12);
+    transition: transform .2s;
+}
+.wa-icono img { width: 26px; height: 26px; }
+.wa-card:hover .wa-icono { transform: translateY(-3px) rotate(-6deg); }
+
+.wa-texto { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.wa-texto strong { font-size: 17px; font-weight: 700; }
+.wa-texto small { font-size: 13px; opacity: .8; }
+.wa-flecha { font-size: 28px; font-weight: 700; transition: transform .2s; }
+.wa-card:hover .wa-flecha { transform: translateX(4px); }
+
+/* ---------- Correos por área ---------- */
+.mail-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 16px; }
+
+.mail-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 22px 20px 20px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid rgba(255, 255, 255, .1);
+    transition: border-color .25s, transform .2s, background .25s;
+}
+.mail-card:hover { border-color: rgba(181, 219, 46, .55); background: rgba(255, 255, 255, .08); transform: translateY(-2px); }
+
+.mail-card .info-icono { width: 46px; height: 46px; flex-basis: 46px; margin-bottom: 12px; }
+.mail-card .info-icono img { width: 24px; height: 24px; }
+.mail-card strong { font-size: 19px; font-weight: 700; }
+.mail-card small { font-size: 13.5px; line-height: 1.45; opacity: .72; }
+.mail-card a { margin-top: auto; padding-top: 12px; font-size: 14.5px; font-weight: 600; color: var(--blanco); overflow-wrap: anywhere; transition: color .2s; }
+.mail-card:hover a, .mail-card a:hover { color: var(--verde); }
+.mail-card:hover .info-icono { transform: translateY(-4px) rotate(-6deg); }
+
+.mail-card .btn-copiar { position: absolute; top: 14px; right: 14px; }
+.mail-card:hover .btn-copiar { opacity: .5; }
+.mail-card .btn-copiar:hover,
+.mail-card .btn-copiar:focus-visible,
+.mail-card .btn-copiar.copiado { opacity: 1; }
+
+/* ---------- Íconos e información (teléfono / ubicación) ---------- */
+.info-lista { list-style: none; margin: 0; padding: 0; }
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .1);
+}
+.info-item:first-child { padding-top: 0; }
+.info-item:last-child { border-bottom: 0; padding-bottom: 0; }
+
+.info-icono {
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .08);
+    transition: transform .2s;
+}
+.info-icono img { width: 22px; height: 22px; object-fit: contain; }
+
+.info-texto { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.info-texto small { font-size: 12px; letter-spacing: .8px; text-transform: uppercase; opacity: .6; }
+.info-texto span { font-size: 15px; font-weight: 500; transition: color .2s; }
+
+.info-item:hover .info-icono { transform: translateY(-4px) rotate(-6deg); }
+.info-item:hover .info-texto span { color: var(--verde); }
+.info-item:hover .btn-copiar { opacity: .5; }
+.info-item .btn-copiar:hover,
+.info-item .btn-copiar:focus-visible,
+.info-item .btn-copiar.copiado { opacity: 1; }
+
+/* ---------- Mapa de ubicación ---------- */
+.mapa-card { padding: 24px 24px 26px; text-align: center; }
+
+.mapa-card .etiqueta { margin-bottom: 18px; }
+
+.mapa-card .mapa-marco { margin: 0 auto; }
+.mapa-card .mapa-circulo { width: min(78vw, 330px); }
+/* Lienzo gris de Esri teñido al azul de la marca (mismo filtro del mapa de inicio) */
+.mapa-card .mapa-circulo .leaflet-tile-pane {
+    filter: invert(1) sepia(1) hue-rotate(195deg) saturate(1.6) brightness(.95) contrast(1.15);
+}
+.mapa-card .mapa-credito { margin: 12px auto 20px; max-width: none; text-align: center; }
+
+/* Punto de ubicación que alumbra */
+.punto-ubicacion span {
+    display: block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #FF8A1F;
+    border: 3px solid #fff;
+    box-shadow: 0 0 14px 3px rgba(255, 138, 31, .85), 0 0 0 0 rgba(255, 138, 31, .55);
+    animation: punto-pulso 2s ease-out infinite;
+}
+@keyframes punto-pulso {
+    0%   { box-shadow: 0 0 14px 3px rgba(255, 138, 31, .85), 0 0 0 0 rgba(255, 138, 31, .55); }
+    100% { box-shadow: 0 0 14px 3px rgba(255, 138, 31, .85), 0 0 0 28px rgba(255, 138, 31, 0); }
+}
+
+.mapa-card h3 { margin: 0 0 8px; font-size: clamp(22px, 2.6vw, 26px); font-weight: 700; color: var(--blanco); }
+.mapa-card p { margin: 0 auto 20px; max-width: 360px; font-size: 14.5px; line-height: 1.5; opacity: .85; }
+
+.mapa-acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+
+.enlace-pildora {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: 1.5px solid rgba(255, 255, 255, .22);
+    background: rgba(255, 255, 255, .06);
+    color: var(--blanco);
+    font-weight: 600;
+    font-size: 14px;
+    transition: background .25s, border-color .25s, color .25s, transform .2s;
+}
+.enlace-pildora:hover { border-color: var(--verde); transform: translateY(-2px); }
+.enlace-pildora.principal {
+    background: linear-gradient(135deg, var(--verde), var(--verde-oscuro));
+    border-color: transparent;
+    color: var(--azul-oscuro);
+}
+
+/* ---------- Redes ---------- */
+.redes-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 22px;
+    font-weight: 600;
+    font-size: 15px;
+}
+.redes-card .redes { margin-top: 0; }
+
+/* ---------- Invitación a unirse ---------- */
+.cta-union {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    width: calc(100% - 16%);
+    max-width: 1040px;
+    margin: 28px auto 0;
+    padding: 26px clamp(22px, 4vw, 40px);
+    text-align: left;
+    border-left: 4px solid var(--verde);
+}
+.cta-union h3 { margin: 0 0 4px; font-size: clamp(20px, 2.4vw, 24px); font-weight: 700; color: var(--blanco); }
+.cta-union p { margin: 0; font-size: 15px; opacity: .85; }
+.cta-union .btn-principal { flex-shrink: 0; padding: 14px 30px; font-size: 16px; white-space: nowrap; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+    .contacto-grid { grid-template-columns: 1fr; width: calc(100% - 10%); }
+    .cta-union { width: calc(100% - 10%); }
+}
+
+@media (max-width: 560px) {
+    .mail-grid { grid-template-columns: 1fr; }
+    .bloque { padding: 20px 16px 18px; }
+    .cta-union { flex-direction: column; align-items: flex-start; }
+    .cta-union .btn-principal { width: 100%; text-align: center; }
+    .btn-copiar { opacity: .35; }
+}
+
+@media (prefers-reduced-motion: reduce) { .punto-ubicacion span { animation: none; } }
