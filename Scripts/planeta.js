@@ -17,6 +17,13 @@
   const canvas = document.getElementById('planeta');
   if (!canvas || !canvas.getContext) return;
   const ctx = canvas.getContext('2d');
+  // Opciones desde el HTML:
+  //   data-calles="no"   -> sin calles dibujadas: la ciudad se forma solo con puntos
+  //   data-datos="ruta"  -> dónde está el archivo de calles
+  const SIN_CALLES = canvas.dataset.calles === 'no';
+  const DATOS = canvas.dataset.datos || 'Scripts/bogota-calles.txt?v=1';
+  //   data-centro="0.7,0.5" -> dónde cae el centro de la vista (fracción del ancho y alto)
+  const CENTRO = (canvas.dataset.centro || '0.5,0.5').split(',').map(Number);
 
   // ------------------------------------------------------------------
   //  PERILLAS
@@ -260,7 +267,7 @@
     W = canvas.clientWidth; H = canvas.clientHeight;   // tamaño sin la animación de entrada
     canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    F = Math.max(W, H * 1.1) * K.lente; CX = W * 0.5; CY = H * 0.5;
+    F = Math.max(W, H * 1.1) * K.lente; CX = W * CENTRO[0]; CY = H * CENTRO[1];
     camara();
     capaLista = false;
   }
@@ -306,38 +313,56 @@
     const x = Math.cos(a) * rx, y = Math.sin(a) * ry;
     return [HZ.cx + x * Math.cos(g) - y * Math.sin(g), HZ.cy + x * Math.sin(g) + y * Math.cos(g), Math.sin(a)];
   }
+  // Brillo del satélite: se pinta una vez y se reutiliza (shadowBlur por cuadro es caro)
+  const brillo = document.createElement('canvas');
+  brillo.width = brillo.height = 32;
+  { const g = brillo.getContext('2d'), r = g.createRadialGradient(16, 16, 0, 16, 16, 16);
+    r.addColorStop(0, `rgba(${LIMA},.9)`); r.addColorStop(0.35, `rgba(${LIMA},.35)`); r.addColorStop(1, `rgba(${LIMA},0)`);
+    g.fillStyle = r; g.fillRect(0, 0, 32, 32); }
+
+  // Líneas de las órbitas: son fijas, van en la capa (atrás recortadas al cielo, adelante encima)
+  function lineasOrbitas(c) {
+    for (const frente of [false, true]) {
+      c.save();
+      if (!frente) c.clip(HZ.cielo, 'evenodd');
+      c.setLineDash([2, 6]); c.lineWidth = 1;
+      c.strokeStyle = frente ? 'rgba(255,255,255,.3)' : 'rgba(255,255,255,.2)';
+      for (const o of orbitas) {
+        c.beginPath();
+        let pen = false;
+        for (let k = 0; k <= 240; k++) {
+          const [x, y, z] = orbita(o, (k / 240) * Math.PI * 2);
+          if ((z >= 0) === frente) { pen ? c.lineTo(x, y) : c.moveTo(x, y); pen = true; } else pen = false;
+        }
+        c.stroke();
+      }
+      c.restore();
+    }
+  }
+  // Por cuadro solo se mueven los satélites
   function dibujaOrbitas(t, frente) {
     if (!HZ) return;
-    ctx.save();
-    if (!frente) ctx.clip(HZ.cielo, 'evenodd');
     for (const o of orbitas) {
-      ctx.beginPath();
-      let pen = false;
-      for (let k = 0; k <= 240; k++) {
-        const [x, y, z] = orbita(o, (k / 240) * Math.PI * 2);
-        if ((z >= 0) === frente) { pen ? ctx.lineTo(x, y) : ctx.moveTo(x, y); pen = true; } else pen = false;
-      }
-      ctx.setLineDash([2, 6]);
-      ctx.strokeStyle = frente ? 'rgba(255,255,255,.3)' : 'rgba(255,255,255,.2)';
-      ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
       const a = o.fase + t * o.vel * Math.PI * 2;
       const [sx, sy, sz] = orbita(o, a);
       if ((sz >= 0) !== frente) continue;
-      for (let k = 1; k <= 12; k++) {
-        const [px, py] = orbita(o, a - Math.sign(o.vel) * k * 0.006);
+      if (!frente && ctx.isPointInPath(HZ.sup, sx * DPR, sy * DPR)) continue;   // detrás del planeta
+      for (let k = 1; k <= 12; k += 1) {
+        const [px, py] = orbita(o, a - Math.sign(o.vel) * k * 0.006), r = 2.4 * (1 - k / 16);
         ctx.fillStyle = `rgba(${LIMA},${0.55 * (1 - k / 12)})`;
-        ctx.beginPath(); ctx.arc(px, py, 2.4 * (1 - k / 16), 0, 7); ctx.fill();
+        ctx.fillRect(px - r, py - r, r * 2, r * 2);
       }
-      ctx.fillStyle = `rgb(${LIMA})`; ctx.shadowColor = `rgba(${LIMA},.9)`; ctx.shadowBlur = 10;
-      ctx.beginPath(); ctx.arc(sx, sy, 3.2, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
+      ctx.drawImage(brillo, sx - 12, sy - 12, 24, 24);
+      ctx.fillStyle = `rgb(${LIMA})`;
+      ctx.beginPath(); ctx.arc(sx, sy, 3.2, 0, 7); ctx.fill();
     }
-    ctx.restore();
   }
 
   const estrellas = Array.from({ length: 90 }, () => [rnd(), rnd() * 0.55, 0.4 + rnd() * 0.9, rnd() * 4]);
 
   // Calles sobre la capa ya pintada (cuando llegan, no se repinta todo el planeta)
   function pintarCalles(c) {
+    if (SIN_CALLES) return;
     // todas las vías de un tipo en un solo trazo (mucho más rápido que una por una)
     const trazo = (lista) => {
       c.beginPath();
@@ -397,6 +422,19 @@
       c.save(); c.clip(sup); recorte = true;
     }
 
+    // Sin calles: la ciudad se dibuja con una trama de puntos más fina
+    if (SIN_CALLES) {
+      const q = [0, 0];
+      for (let la = 4.46; la <= 4.81; la += 0.0032) for (let lo = -74.29; lo <= -74.01; lo += 0.0032) {
+        const j = ((la * 733 + lo * 197) % 1) * 0.0016;
+        q[0] = la + j; q[1] = lo - j;
+        if (!enZona(q)) continue;
+        const [x, y, z] = proj(q);
+        if (z <= 0 || x < -2 || x > W + 2 || y < 0 || y > H + 2) continue;
+        c.fillStyle = `rgba(225,220,255,${0.22 + z * 0.5})`;
+        c.fillRect(x - 0.8, y - 0.8, 1.6, 1.6);
+      }
+    }
     // Trama de puntos (la "tierra" vista desde arriba)
     const p = [0, 0];
     for (let la = 3.6; la <= 5.7; la += 0.0105) for (let lo = -75.1; lo <= -73.2; lo += 0.0105) {
@@ -404,7 +442,7 @@
       p[0] = la + j; p[1] = lo - j;
       const [x, y, z] = proj(p);
       if (z <= 0 || x < -2 || x > W + 2 || y < 0 || y > H + 2) continue;
-      const dentro = enZonaRapido(p);
+      const dentro = !SIN_CALLES && enZonaRapido(p);
       c.fillStyle = dentro ? `rgba(220,214,255,${0.18 + z * 0.4})` : `rgba(200,190,255,${0.06 + z * 0.22})`;
       const sz = dentro ? 1.6 : 1.3;
       c.fillRect(x - sz / 2, y - sz / 2, sz, sz);
@@ -412,6 +450,7 @@
 
     pintarCalles(c);
     if (recorte) c.restore();
+    if (HZ) lineasOrbitas(c);
     capaLista = true;
   }
 
@@ -423,7 +462,7 @@
     ctx.clearRect(0, 0, W, H);
     for (const [x, y, r, d] of estrellas) {
       ctx.fillStyle = `rgba(255,255,255,${0.25 + 0.35 * (0.5 + 0.5 * Math.sin(t * 1.3 + d))})`;
-      ctx.beginPath(); ctx.arc(x * W, y * H, r, 0, 7); ctx.fill();
+      ctx.fillRect(x * W - r * 0.8, y * H - r * 0.8, r * 1.6, r * 1.6);
     }
     dibujaOrbitas(t, false);
     ctx.drawImage(capa, 0, 0, W, H);
@@ -435,16 +474,30 @@
       if (k < 0) return true;
       if (k > 1) { if (k < 1.3 && rnd() < 0.3) pings.push({ p: e.tramo[e.tramo.length - 1], t }); return false; }  // solo 3 de cada 10 llegadas laten
       const n = e.tramo.length - 1, len = Math.min(16, Math.max(4, n * 0.4)), head = k * (n + len), tail = head - len;
-      for (let i = Math.max(0, Math.floor(tail)); i < Math.min(n, Math.ceil(head)); i++) {
-        const [x1, y1, z1] = proj(e.tramo[i]), [x2, y2, z2] = proj(e.tramo[i + 1]);
-        if (z1 <= 0 || z2 <= 0) continue;
-        ctx.strokeStyle = `rgba(${LIMA},${Math.max(0, (i - tail) / len)})`;
-        ctx.lineWidth = e.av ? 3.2 : 2.4;
-        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-      }
-      if (head < n) {   // el repartidor: un punto en la punta
-        const [x, y, z] = proj(e.tramo[Math.max(0, Math.floor(head))]);
-        if (z > 0) { ctx.fillStyle = `rgb(${LIMA})`; ctx.beginPath(); ctx.arc(x, y, e.av ? 2.4 : 2, 0, 7); ctx.fill(); }
+      // Posición continua sobre el recorrido (no salta de punto en punto)
+      const at = (f) => {
+        const i = Math.min(n - 1, Math.max(0, Math.floor(f))), u = Math.min(1, Math.max(0, f - i));
+        const A = e.tramo[i], B = e.tramo[i + 1] || A;
+        return proj([A[0] + (B[0] - A[0]) * u, A[1] + (B[1] - A[1]) * u]);
+      };
+      const h = Math.min(n, head), t0 = Math.max(0, tail);
+      if (n > 0 && h > t0) {
+        ctx.lineWidth = e.av ? 3.2 : 2.4; ctx.lineCap = 'round';
+        let prev = at(t0), pf = t0;
+        for (let f = Math.floor(t0) + 1; ; f++) {
+          const ff = Math.min(f, h), cur = at(ff);
+          if (prev[2] > 0 && cur[2] > 0) {
+            ctx.strokeStyle = `rgba(${LIMA},${Math.min(1, Math.max(0, ((pf + ff) / 2 - tail) / len))})`;
+            ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(cur[0], cur[1]); ctx.stroke();
+          }
+          prev = cur; pf = ff;
+          if (ff >= h) break;
+        }
+        ctx.lineCap = 'butt';
+        if (head < n) {   // el repartidor: un punto en la punta
+          const [x, y, z] = at(head);
+          if (z > 0) { ctx.fillStyle = `rgb(${LIMA})`; ctx.beginPath(); ctx.arc(x, y, e.av ? 2.4 : 2, 0, 7); ctx.fill(); }
+        }
       }
       return true;
     });
@@ -473,7 +526,7 @@
   resize();
   if (reduce) frame(0); else kick();
   // Las calles llegan aparte: el planeta aparece de una vez y las calles se suman al llegar
-  fetch('Scripts/bogota-calles.txt?v=1')
+  fetch(DATOS)
     .then((r) => (r.ok ? r.text() : Promise.reject()))
     .then((d) => { usarOSM(d); if (reduce) frame(0); })
     .catch(() => { mallaRespaldo(); if (reduce) frame(0); });
