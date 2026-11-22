@@ -22,10 +22,10 @@
   //  PERILLAS
   // ------------------------------------------------------------------
   const K = {
-    escala: 150,       // cuánto se agranda la zona sobre la esfera (curvatura vs. detalle)
+    escala: 190,       // cuánto se agranda la zona sobre la esfera (curvatura vs. detalle)
     inclinacion: 44,   // grados que se inclina la vista (más = horizonte más cerca)
     periodo: 40,       // segundos de un vaivén completo
-    entregas: 70,      // entregas simultáneas por las calles
+    entregas: 46,      // entregas simultáneas recorriendo las calles
   };
   const LIMA = '181, 219, 46';
   const C = [4.655, -74.13];                 // centro de la zona de servicio
@@ -104,17 +104,54 @@
     rutasPeriferia = calles.filter((p) => calleLen(p) > 0.0015 && (pip(p[0], ZONAS[1].coords) || pip(p[0], ZONAS[2].coords)));
   }
 
-  // Entregas: tramos de calles o avenidas, en cualquiera de las tres zonas
+  // Red de calles: cada vía es una arista y sus extremos son cruces.
+  // Las entregas recorren la red de cruce en cruce, como un repartidor.
+  const nodoDe = (p) => Math.round(p[0] * 1e4) + ',' + Math.round(p[1] * 1e4);
+  const red = new Map();
+  const aristas = new Map();
+  const conecta = (pts, av) => {
+    if (pts.length < 2) return;
+    const e = { pts, av, a: nodoDe(pts[0]), b: nodoDe(pts[pts.length - 1]), len: calleLen(pts) };
+    aristas.set(pts, e);
+    for (const [n, ida] of [[e.a, true], [e.b, false]]) { if (!red.has(n)) red.set(n, []); red.get(n).push({ e, ida }); }
+  };
+  avenidas.forEach((p) => conecta(p, true));
+  calles.forEach((p) => conecta(p, false));
+  const rumbo = (a, b) => Math.atan2(b[0] - a[0], b[1] - a[1]);
+
+  function recorrido(inicio, meta) {
+    let e = aristas.get(inicio), ida = rnd() < 0.5;
+    const ruta = [];
+    let largo = 0, av = e.av;
+    for (let paso = 0; paso < 40; paso++) {
+      const pts = ida ? e.pts : [...e.pts].reverse();
+      ruta.push(...(ruta.length ? pts.slice(1) : pts));
+      largo += e.len;
+      if (largo >= meta) break;
+      // en el cruce: seguir lo más derecho posible, a veces girar
+      const fin = ruta[ruta.length - 1], dir = rumbo(ruta[ruta.length - 2], fin);
+      const ops = (red.get(nodoDe(fin)) || []).filter((o) => o.e !== e).map((o) => {
+        const q = o.ida ? o.e.pts : [...o.e.pts].reverse();
+        let d = Math.abs(rumbo(q[0], q[1]) - dir); if (d > Math.PI) d = 2 * Math.PI - d;
+        return { o, d };
+      }).filter((x) => x.d < 2.2);
+      if (!ops.length) break;
+      ops.sort((x, y) => x.d - y.d);
+      const x = rnd() < 0.7 || ops.length === 1 ? ops[0] : ops[1 + Math.floor(rnd() * (ops.length - 1))];
+      e = x.o.e; ida = x.o.ida; av = av || e.av;
+    }
+    return { ruta, largo, av };
+  }
+
   function rng(seed) { return () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646; }
   const rnd = rng(7);
   function nuevaEntrega(t) {
     const r0 = rnd();
-    const usaAv = r0 < 0.4;
-    const pool = !usaAv && r0 < 0.65 && rutasPeriferia.length ? rutasPeriferia : usaAv ? rutasAv : rutasCa;
-    let tramo = dens(pool[Math.floor(rnd() * pool.length)], 0.0012);
-    if (tramo.length > 60) { const s0 = Math.floor(rnd() * (tramo.length - 60)); tramo = tramo.slice(s0, s0 + 60); }
-    if (rnd() < 0.5) tramo = tramo.reverse();
-    return { tramo, t0: t + rnd() * 1.5, dur: 1.4 + rnd() * 2 + (usaAv ? 0.8 : 0), av: usaAv };
+    const usaAv = r0 < 0.35;
+    const pool = !usaAv && r0 < 0.6 && rutasPeriferia.length ? rutasPeriferia : usaAv ? rutasAv : rutasCa;
+    const { ruta, largo, av } = recorrido(pool[Math.floor(rnd() * pool.length)], 0.025 + rnd() * 0.035);
+    const tramo = dens(ruta, 0.0012);
+    return { tramo, t0: t + rnd() * 1.5, dur: 1.2 + largo / 0.014, av };
   }
   let entregas = [];
   const pings = [];
@@ -257,13 +294,17 @@
       const k = (t - e.t0) / e.dur;
       if (k < 0) return true;
       if (k > 1) { if (rnd() < 0.3) pings.push({ p: e.tramo[e.tramo.length - 1], t }); return false; }  // solo 3 de cada 10 llegadas laten
-      const n = e.tramo.length - 1, len = Math.max(3, n * 0.45), head = k * (n + len), tail = head - len;
+      const n = e.tramo.length - 1, len = Math.min(16, Math.max(4, n * 0.4)), head = k * (n + len), tail = head - len;
       for (let i = Math.max(0, Math.floor(tail)); i < Math.min(n, Math.ceil(head)); i++) {
         const [x1, y1, z1] = proj(e.tramo[i]), [x2, y2, z2] = proj(e.tramo[i + 1]);
         if (z1 <= 0 || z2 <= 0) continue;
         ctx.strokeStyle = `rgba(${LIMA},${Math.max(0, (i - tail) / len)})`;
         ctx.lineWidth = e.av ? 3.2 : 2.4;
         ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      }
+      if (head < n) {   // el repartidor: un punto en la punta
+        const [x, y, z] = proj(e.tramo[Math.max(0, Math.floor(head))]);
+        if (z > 0) { ctx.fillStyle = `rgb(${LIMA})`; ctx.beginPath(); ctx.arc(x, y, e.av ? 2.4 : 2, 0, 7); ctx.fill(); }
       }
       return true;
     });
@@ -277,18 +318,6 @@
       ctx.fillStyle = `rgba(${LIMA},${1 - k})`; ctx.beginPath(); ctx.arc(x, y, 2.6, 0, 7); ctx.fill();
     }
 
-    // Nombres de las zonas
-    const fs = Math.max(11, Math.min(14, W / 44));
-    ctx.font = `700 ${fs}px Poppins, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    for (const z of ZONAS) {
-      const [x, y, zz] = proj(z.label);
-      if (zz <= 0) continue;
-      const w = ctx.measureText(z.nombre).width + 20, h = fs + 12;
-      ctx.fillStyle = `rgba(${z.color},.95)`;
-      ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x - w / 2, y - h / 2, w, h, h / 2) : ctx.rect(x - w / 2, y - h / 2, w, h); ctx.fill();
-      ctx.fillStyle = '#12092E'; ctx.fillText(z.nombre, x, y + 0.5);
-    }
-    ctx.textBaseline = 'alphabetic';
     dibujaOrbitas(t, true);
   }
 

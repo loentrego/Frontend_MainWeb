@@ -25,7 +25,7 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 :where(a, button, input, textarea, select):focus-visible { outline: 2.5px solid #B5DB2E; outline-offset: 3px; }
 
 /* ---------- Planeta: globo 3D en canvas (Scripts/planeta.js) ---------- */
-.planeta { display: block; width: clamp(320px, 44vw, 800px); aspect-ratio: 1; height: auto; animation: planeta-in 1.4s cubic-bezier(.2,.8,.2,1) both; }
+.planeta { display: block; width: clamp(340px, 52vw, 940px); aspect-ratio: 1; height: auto; animation: planeta-in 1.4s cubic-bezier(.2,.8,.2,1) both; }
 /* Bordes suaves: el planeta se "corta" sin líneas rectas */
 .planeta {
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 8%, #000 88%, transparent 100%);
@@ -35,6 +35,9 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 }
 @keyframes planeta-in { from { opacity: 0; transform: scale(.9) translateY(24px); } }
 .hero-imagen::before { display: none; }
+/* El texto queda siempre por encima del planeta (que ahora es más grande) */
+.hero-texto { position: relative; z-index: 2; }
+.hero-imagen { position: relative; z-index: 1; }
 
 /* ---------- Cómo funciona ---------- */
 .como { position: relative; z-index: 1; }
