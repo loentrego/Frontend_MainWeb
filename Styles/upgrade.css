@@ -28,10 +28,24 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 .planeta { display: block; width: clamp(340px, 52vw, 940px); aspect-ratio: 1; height: auto; animation: planeta-in 1.4s cubic-bezier(.2,.8,.2,1) both; }
 /* Bordes suaves: el planeta se "corta" sin líneas rectas */
 .planeta {
-  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 8%, #000 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 6%, #000 86%, transparent 100%);
   -webkit-mask-composite: source-in;
-          mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 8%, #000 88%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 90%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 6%, #000 86%, transparent 100%);
           mask-composite: intersect;
+}
+/* Escritorio: vista apaisada, pegada al borde derecho de la pantalla */
+@media (min-width: 901px) {
+  .hero-imagen { transform: none; justify-content: flex-end; align-self: stretch; }
+  .planeta {
+    width: clamp(520px, 58vw, 1200px);
+    aspect-ratio: 5 / 4;
+    margin-right: calc((min(1560px, 88vw) - 100vw) / 2);
+    flex-shrink: 0;
+    align-self: center;
+    /* sin difuminado a la derecha: sigue hasta el borde de la pantalla */
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 14%), linear-gradient(to bottom, transparent 0, #000 6%, #000 86%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0, #000 14%), linear-gradient(to bottom, transparent 0, #000 6%, #000 86%, transparent 100%);
+  }
 }
 @keyframes planeta-in { from { opacity: 0; transform: scale(.9) translateY(24px); } }
 .hero-imagen::before { display: none; }

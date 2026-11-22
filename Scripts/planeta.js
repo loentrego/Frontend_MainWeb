@@ -22,8 +22,14 @@
   //  PERILLAS
   // ------------------------------------------------------------------
   const K = {
-    escala: 190,       // cuánto se agranda la zona sobre la esfera (curvatura vs. detalle)
-    inclinacion: 44,   // grados que se inclina la vista (más = horizonte más cerca)
+    escala: 80,        // cuánto se agranda la zona sobre la esfera (curvatura vs. detalle)
+    mira: [4.66, -74.14],  // punto del mapa al que apunta la cámara
+    altura: 0.3,      // altura de la cámara sobre la superficie (radio = 1)
+    atras: 0.3,       // cuánto se aleja la cámara hacia atrás de la mira
+    rumbo: 20,         // hacia dónde mira (0 = norte)
+    picada: 46,        // grados que mira hacia abajo
+    ladeo: -16,         // giro de la vista (horizonte inclinado)
+    lente: 0.78,       // distancia focal (más = más zoom)
     periodo: 40,       // segundos de un vaivén completo
     entregas: 46,      // entregas simultáneas recorriendo las calles
   };
@@ -156,27 +162,57 @@
   let entregas = [];
   const pings = [];
 
-  // ---------- Proyección: la zona agrandada sobre una esfera ----------
-  let W = 0, H = 0, DPR = 1, R = 0, CX = 0, CY = 0, lon0 = 0, lat0 = 0, sL = 0, cL = 1;
-  const capa = document.createElement('canvas');   // calles, zonas y superficie: se dibujan una vez
+  // ---------- Cámara: vista oblicua desde el espacio, como una foto desde la órbita ----------
+  //  La zona se agranda sobre una esfera de radio 1. Una cámara en perspectiva
+  //  flota sobre ella, mira hacia el horizonte y va un poco ladeada.
+  let W = 0, H = 0, DPR = 1, F = 1, CX = 0, CY = 0;
+  const capa = document.createElement('canvas');   // superficie, puntos y calles: se dibujan una vez
   let capaLista = false;
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cruz = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const uni = (a) => { const l = Math.hypot(...a); return [a[0] / l, a[1] / l, a[2] / l]; };
+  const suma = (...vs) => vs.reduce((s, [k, v]) => [s[0] + k * v[0], s[1] + k * v[1], s[2] + k * v[2]], [0, 0, 0]);
+  const esfera = (la, lo) => { const a = la * rad, b = lo * rad; return [Math.cos(a) * Math.cos(b), Math.cos(a) * Math.sin(b), Math.sin(a)]; };
+  const mundo = ([la, lo]) => esfera(C[0] + (la - C[0]) * K.escala, (lo - C[1]) * K.escala);
+
+  let PC, PCd, DV, RV, UV;   // posición de la cámara, su distancia, y sus ejes (adelante, derecha, arriba)
+  function camara() {
+    const T = mundo(K.mira);                         // punto de la superficie bajo la mira
+    const lat = Math.asin(T[2]), lon = Math.atan2(T[1], T[0]);
+    const E = [-Math.sin(lon), Math.cos(lon), 0];
+    const N = [-Math.sin(lat) * Math.cos(lon), -Math.sin(lat) * Math.sin(lon), Math.cos(lat)];
+    const h = K.rumbo * rad, p = K.picada * rad, r = K.ladeo * rad;
+    const Fh = suma([Math.cos(h), N], [Math.sin(h), E]);
+    PC = suma([1 + K.altura, T], [-K.atras, Fh]);
+    PCd = Math.hypot(...PC);
+    DV = uni(suma([Math.cos(p), Fh], [-Math.sin(p), T]));
+    const R0 = uni(cruz(DV, T)), U0 = cruz(R0, DV);
+    RV = suma([Math.cos(r), R0], [Math.sin(r), U0]);
+    UV = suma([-Math.sin(r), R0], [Math.cos(r), U0]);
+  }
+  function verP(P) {                                  // punto 3D -> pantalla
+    const v = [P[0] - PC[0], P[1] - PC[1], P[2] - PC[2]];
+    const z = dot(v, DV);
+    if (z < 0.02) return [0, 0, -1];
+    return [CX + F * dot(v, RV) / z, CY - F * dot(v, UV) / z, z];
+  }
+  function proj(p) {                                  // [lat, lon] -> [x, y, luz]  (luz <= 0: no se ve)
+    const P = mundo(p);
+    const cara = dot(P, PC) - 1;                      // > 0: del lado que mira la cámara
+    if (cara <= 0) return [0, 0, -1];
+    const s = verP(P);
+    if (s[2] < 0) return s;
+    s[2] = Math.min(1, cara / K.altura * 1.4);        // se apaga hacia el horizonte
+    return s;
+  }
   function resize() {
-    const r = canvas.getBoundingClientRect();
     DPR = Math.min(window.devicePixelRatio || 1, 2);
-    W = r.width; H = r.height;
+    W = canvas.clientWidth; H = canvas.clientHeight;   // tamaño sin la animación de entrada
     canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    R = W * 0.92;                     // esfera grande: solo se ve la parte de arriba
-    CX = W * 0.5; CY = H * 0.16 + R;  // el horizonte queda cerca del borde superior
+    F = Math.max(W, H * 1.1) * K.lente; CX = W * 0.5; CY = H * 0.5;
+    camara();
     capaLista = false;
-  }
-  function proj([la, lo]) {
-    const lat = C[0] + (la - C[0]) * K.escala, lon = C[1] + (lo - C[1]) * K.escala;
-    const a = lat * rad, b = (lon - lon0) * rad, ca = Math.cos(a);
-    const x = ca * Math.sin(b);
-    const y = cL * Math.sin(a) - sL * ca * Math.cos(b);
-    const z = sL * Math.sin(a) + cL * ca * Math.cos(b);
-    return [CX + x * R, CY - y * R, z];
   }
   function linea(pts) {
     ctx.beginPath();
@@ -186,39 +222,59 @@
       if (z > 0) { pen ? ctx.lineTo(x, y) : ctx.moveTo(x, y); pen = true; } else pen = false;
     }
   }
+  // El borde del planeta (horizonte) visto desde la cámara
+  function horizonte() {
+    const ch = [PC[0] / PCd, PC[1] / PCd, PC[2] / PCd];
+    const A = uni(cruz(ch, Math.abs(ch[2]) < 0.9 ? [0, 0, 1] : [1, 0, 0])), B = cruz(ch, A);
+    const s = Math.sqrt(1 - 1 / (PCd * PCd)), out = [];
+    let mejor = -1, k0 = 0;
+    const raw = [];
+    for (let k = 0; k < 720; k++) {
+      const t = (k / 720) * Math.PI * 2;
+      const P = suma([1 / PCd, ch], [s * Math.cos(t), A], [s * Math.sin(t), B]);
+      const q = verP(P); raw.push(q);
+      if (q[2] < 0 && mejor < 0) { mejor = 0; k0 = k; }
+    }
+    // tramo continuo delante de la cámara
+    for (let i = 0; i < 720; i++) { const q = raw[(k0 + i) % 720]; if (q[2] >= 0) out.push(q); }
+    return out;
+  }
 
   // Trama de puntos sobre la superficie (más brillantes dentro de las zonas)
   const puntos = [];
-  for (let la = 4.0; la <= 5.45; la += 0.0105) for (let lo = -74.95; lo <= -73.35; lo += 0.0105) {
+  for (let la = 3.6; la <= 5.7; la += 0.0105) for (let lo = -75.1; lo <= -73.2; lo += 0.0105) {
     const j = ((la * 977 + lo * 131) % 1) * 0.004;
     const p = [la + j, lo - j];
     puntos.push([p, enZona(p)]);
   }
 
-  // Órbitas alrededor del planeta (fijas en el espacio)
+  // Órbitas: elipses inclinadas como el horizonte. La mitad de atrás pasa
+  //  detrás del planeta (solo se ve en el cielo) y la de adelante, por encima.
   const orbitas = [
-    { r: 1.06, inc: 14, nodo: 22, vel: 0.022, fase: 1.2 },
-    { r: 1.1, inc: 22, nodo: -30, vel: -0.018, fase: 2.0 },
-    { r: 1.15, inc: 10, nodo: -8, vel: 0.014, fase: 1.6 },
-    { r: 1.21, inc: 28, nodo: 38, vel: -0.012, fase: 1.9 },
+    { r: 0.9, e: 0.66, giro: 4, vel: 0.022, fase: 1.2 },
+    { r: 0.98, e: 0.72, giro: -6, vel: -0.018, fase: 2.0 },
+    { r: 1.06, e: 0.68, giro: 9, vel: 0.014, fase: 1.6 },
+    { r: 1.16, e: 0.76, giro: -3, vel: -0.012, fase: 1.9 },
   ];
+  let HZ = null;   // { centro, ángulo, cielo: Path2D }
   function orbita(o, a) {
-    let x = Math.cos(a) * o.r, y = Math.sin(a) * o.r, z = 0;
-    const i = o.inc * rad, n = o.nodo * rad;
-    [y, z] = [y * Math.cos(i), y * Math.sin(i)];
-    [x, y] = [x * Math.cos(n) - y * Math.sin(n), x * Math.sin(n) + y * Math.cos(n)];
-    return [CX + x * R, CY - y * R, z];
+    const g = HZ.ang + o.giro * rad, rx = W * 0.62 * o.r, ry = rx * o.e;
+    const x = Math.cos(a) * rx, y = Math.sin(a) * ry;
+    return [HZ.cx + x * Math.cos(g) - y * Math.sin(g), HZ.cy + x * Math.sin(g) + y * Math.cos(g), Math.sin(a)];
   }
   function dibujaOrbitas(t, frente) {
+    if (!HZ) return;
+    ctx.save();
+    if (!frente) ctx.clip(HZ.cielo, 'evenodd');
     for (const o of orbitas) {
       ctx.beginPath();
       let pen = false;
       for (let k = 0; k <= 240; k++) {
         const [x, y, z] = orbita(o, (k / 240) * Math.PI * 2);
-        if ((z >= 0) === frente && y < H + 20) { pen ? ctx.lineTo(x, y) : ctx.moveTo(x, y); pen = true; } else pen = false;
+        if ((z >= 0) === frente) { pen ? ctx.lineTo(x, y) : ctx.moveTo(x, y); pen = true; } else pen = false;
       }
       ctx.setLineDash([2, 6]);
-      ctx.strokeStyle = frente ? 'rgba(255,255,255,.3)' : 'rgba(255,255,255,.14)';
+      ctx.strokeStyle = frente ? 'rgba(255,255,255,.3)' : 'rgba(255,255,255,.2)';
       ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
       const a = o.fase + t * o.vel * Math.PI * 2;
       const [sx, sy, sz] = orbita(o, a);
@@ -231,9 +287,10 @@
       ctx.fillStyle = `rgb(${LIMA})`; ctx.shadowColor = `rgba(${LIMA},.9)`; ctx.shadowBlur = 10;
       ctx.beginPath(); ctx.arc(sx, sy, 3.2, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
     }
+    ctx.restore();
   }
 
-  const estrellas = Array.from({ length: 70 }, () => [rnd(), rnd() * 0.3, 0.4 + rnd() * 0.9, rnd() * 4]);
+  const estrellas = Array.from({ length: 90 }, () => [rnd(), rnd() * 0.55, 0.4 + rnd() * 0.9, rnd() * 4]);
 
   function pintarCapa() {
     capa.width = Math.round(W * DPR); capa.height = Math.round(H * DPR);
@@ -244,15 +301,41 @@
       let pen = false;
       for (const p of pts) { const [x, y, z] = proj(p); if (z > 0) { pen ? c.lineTo(x, y) : c.moveTo(x, y); pen = true; } else pen = false; }
     };
-    // Atmósfera
-    let g = c.createRadialGradient(CX, CY, R * 0.97, CX, CY, R * 1.09);
-    g.addColorStop(0, 'rgba(140,125,255,.55)'); g.addColorStop(0.4, 'rgba(140,125,255,.18)'); g.addColorStop(1, 'rgba(140,125,255,0)');
-    c.fillStyle = g; c.beginPath(); c.arc(CX, CY, R * 1.09, 0, 7); c.fill();
-    // Superficie
-    g = c.createLinearGradient(0, CY - R, 0, H);
-    g.addColorStop(0, '#3A2BB8'); g.addColorStop(0.25, '#2A1F96'); g.addColorStop(1, '#170F5C');
-    c.fillStyle = g; c.beginPath(); c.arc(CX, CY, R, 0, 7); c.fill();
-    c.strokeStyle = 'rgba(200,190,255,.7)'; c.lineWidth = 1.5; c.beginPath(); c.arc(CX, CY, R, Math.PI, 0); c.stroke();
+    // Horizonte y superficie
+    const hz = horizonte();
+    if (hz.length > 2) {
+      const a = hz[0], b = hz[hz.length - 1];
+      const [mx, my] = proj(K.mira);
+      let nx = -(b[1] - a[1]), ny = b[0] - a[0];
+      const nl = Math.hypot(nx, ny) || 1; nx /= nl; ny /= nl;
+      if ((mx - a[0]) * nx + (my - a[1]) * ny < 0) { nx = -nx; ny = -ny; }
+      const lejos = 6 * (W + H);
+      const sup = new Path2D();
+      hz.forEach(([x, y], i) => (i ? sup.lineTo(x, y) : sup.moveTo(x, y)));
+      sup.lineTo(b[0] + nx * lejos, b[1] + ny * lejos); sup.lineTo(a[0] + nx * lejos, a[1] + ny * lejos); sup.closePath();
+      // superficie: más clara junto al horizonte (luz rasante), oscura al frente
+      let g = c.createLinearGradient(mx - nx * H * 0.6, my - ny * H * 0.6, mx + nx * H * 0.9, my + ny * H * 0.9);
+      g.addColorStop(0, '#3A2BB8'); g.addColorStop(0.35, '#2A1F96'); g.addColorStop(1, '#150D52');
+      c.fillStyle = g; c.fill(sup);
+      const cielo = new Path2D(); cielo.rect(-W, -H, 3 * W, 3 * H); cielo.addPath(sup);
+      // dirección del horizonte en la parte visible del lienzo
+      const vis = hz.filter(([x, y]) => x > -W * 0.2 && x < W * 1.2 && y > -H && y < 2 * H).sort((p, q) => p[0] - q[0]);
+      const L = vis[0] || a, Rr = vis[vis.length - 1] || b;
+      const ang = Math.atan2(Rr[1] - L[1], Rr[0] - L[0]);
+      let ox = -Math.sin(ang), oy = Math.cos(ang); if ((mx - L[0]) * ox + (my - L[1]) * oy < 0) { ox = -ox; oy = -oy; }
+      const midx = (L[0] + Rr[0]) / 2, midy = (L[1] + Rr[1]) / 2;
+      HZ = { cx: midx + ox * H * 0.14, cy: midy + oy * H * 0.14, ang, cielo };
+      // atmósfera: halo ancho y una línea fina brillante, como la foto desde la órbita
+      const arco = new Path2D();
+      hz.forEach(([x, y], i) => (i ? arco.lineTo(x, y) : arco.moveTo(x, y)));
+      c.save();
+      c.translate(-nx * 6, -ny * 6);
+      for (const [w, al] of [[46, 0.06], [26, 0.1], [12, 0.18]]) { c.strokeStyle = `rgba(140,125,255,${al})`; c.lineWidth = w; c.stroke(arco); }
+      c.restore();
+      c.strokeStyle = 'rgba(181,219,46,.35)'; c.lineWidth = 6; c.filter = 'blur(4px)'; c.save(); c.translate(-nx * 3, -ny * 3); c.stroke(arco); c.restore(); c.filter = 'none';
+      c.strokeStyle = 'rgba(225,220,255,.9)'; c.lineWidth = 2; c.stroke(arco);
+      c.save(); c.clip(sup);
+    }
 
     // Trama de puntos (la "tierra" vista desde arriba)
     for (const [p, dentro] of puntos) {
@@ -268,6 +351,7 @@
     for (const k of calles) { linea(k); c.stroke(); }
     c.strokeStyle = 'rgba(220,214,255,.26)'; c.lineWidth = 1.1;
     for (const a of avenidas) { linea(a); c.stroke(); }
+    c.restore();
 
     capaLista = true;
   }
@@ -275,9 +359,6 @@
   // ---------- Fotograma ----------
   function frame(ms) {
     const t = ms / 1000;
-    lon0 = C[1];
-    lat0 = C[0] - K.inclinacion;
-    sL = Math.sin(lat0 * rad); cL = Math.cos(lat0 * rad);
     if (!capaLista) pintarCapa();
 
     ctx.clearRect(0, 0, W, H);
@@ -293,7 +374,7 @@
     entregas = entregas.filter((e) => {
       const k = (t - e.t0) / e.dur;
       if (k < 0) return true;
-      if (k > 1) { if (rnd() < 0.3) pings.push({ p: e.tramo[e.tramo.length - 1], t }); return false; }  // solo 3 de cada 10 llegadas laten
+      if (k > 1) { if (k < 1.3 && rnd() < 0.3) pings.push({ p: e.tramo[e.tramo.length - 1], t }); return false; }  // solo 3 de cada 10 llegadas laten
       const n = e.tramo.length - 1, len = Math.min(16, Math.max(4, n * 0.4)), head = k * (n + len), tail = head - len;
       for (let i = Math.max(0, Math.floor(tail)); i < Math.min(n, Math.ceil(head)); i++) {
         const [x1, y1, z1] = proj(e.tramo[i]), [x2, y2, z2] = proj(e.tramo[i + 1]);
