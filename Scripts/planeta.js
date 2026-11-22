@@ -226,12 +226,6 @@
       c.fillRect(x - sz / 2, y - sz / 2, sz, sz);
     }
 
-    // Zonas
-    for (const z of ZONAS) {
-      linea([...z.coords, z.coords[0]]);
-      c.fillStyle = `rgba(${z.color},.07)`; c.fill();
-      c.setLineDash([6, 5]); c.strokeStyle = `rgba(${z.color},.75)`; c.lineWidth = 1.6; c.stroke(); c.setLineDash([]);
-    }
     // Calles y avenidas
     c.strokeStyle = 'rgba(200,190,255,.14)'; c.lineWidth = 0.6;
     for (const k of calles) { linea(k); c.stroke(); }
@@ -262,7 +256,7 @@
     entregas = entregas.filter((e) => {
       const k = (t - e.t0) / e.dur;
       if (k < 0) return true;
-      if (k > 1) { pings.push({ p: e.tramo[e.tramo.length - 1], t }); return false; }
+      if (k > 1) { if (rnd() < 0.3) pings.push({ p: e.tramo[e.tramo.length - 1], t }); return false; }  // solo 3 de cada 10 llegadas laten
       const n = e.tramo.length - 1, len = Math.max(3, n * 0.45), head = k * (n + len), tail = head - len;
       for (let i = Math.max(0, Math.floor(tail)); i < Math.min(n, Math.ceil(head)); i++) {
         const [x1, y1, z1] = proj(e.tramo[i]), [x2, y2, z2] = proj(e.tramo[i + 1]);
