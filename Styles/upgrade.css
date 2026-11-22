@@ -1,0 +1,134 @@
+/* =====================================================================
+   LoEntrego · Web — Puesta a punto
+   Se carga después de las hojas de cada página. Conserva el estilo
+   "Vitrina" (azul con luces, cinta lima, Poppins) y lo alinea con el
+   ecosistema: un solo azul, un solo lima, sin colores sueltos.
+   ===================================================================== */
+
+/* ---------- Paleta unificada ---------- */
+:root {
+  --naranja: #D7F25A;   /* antes naranja: ahora un lima claro (pareja del lima) */
+  --morado: #5A48D6;    /* antes morado: ahora el índigo claro de la marca */
+}
+.l2, .l6 { background: rgba(90, 72, 214, .5) !important; }
+.l3, .l5 { background: rgba(181, 219, 46, .22) !important; }
+.hero-imagen::before { background: radial-gradient(circle, rgba(181, 219, 46, .18) 0%, rgba(90, 72, 214, .18) 40%, transparent 70%) !important; }
+
+/* ---------- Secciones visibles aunque falle el JavaScript ---------- */
+html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .ticker-grupo, .luz, .hero-imagen .caja { animation: none !important; }
+}
+
+/* Foco visible para teclado */
+:where(a, button, input, textarea, select):focus-visible { outline: 2.5px solid #B5DB2E; outline-offset: 3px; }
+
+/* ---------- Bogotá detrás de la caja (red de calles con cometas) ---------- */
+.hero-imagen { isolation: isolate; }
+.hero-city {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: min(170%, 900px);
+  aspect-ratio: 1;
+  height: auto;
+  translate: -50% -50%;
+  z-index: -1;
+  pointer-events: none;
+  -webkit-mask: radial-gradient(closest-side, #000 45%, transparent 100%);
+          mask: radial-gradient(closest-side, #000 45%, transparent 100%);
+  animation: city-in 1.4s ease-out both .3s;
+}
+.city .c-street { fill: none; stroke: rgba(255, 255, 255, .14); stroke-width: 1.1; stroke-dasharray: 2 6; stroke-linecap: round; }
+.city .c-avenue { fill: none; stroke: rgba(255, 255, 255, .3); stroke-width: 2.2; stroke-dasharray: 6 7; stroke-linecap: round; }
+.city .c-node { fill: rgba(255, 255, 255, .4); }
+.city .c-hub { fill: #B5DB2E; opacity: .7; transform-box: fill-box; transform-origin: center; animation: c-hub 4s ease-in-out var(--d, 0s) infinite; }
+.city .c-comet, .city .c-glow {
+  fill: none; stroke: #B5DB2E; stroke-linecap: round;
+  stroke-dasharray: 9 140; stroke-dashoffset: 9;
+  animation: c-comet var(--t, 7s) linear var(--w, 0s) infinite both;
+}
+.city .c-comet { stroke-width: 2.5; }
+.city .c-glow { stroke-width: 8; opacity: .22; }
+@keyframes c-comet { to { stroke-dashoffset: -100; } }
+@keyframes c-hub { 0%, 100% { transform: scale(1); opacity: .55; } 50% { transform: scale(1.5); opacity: .9; } }
+@keyframes city-in { from { opacity: 0; transform: scale(.94); } }
+@media (prefers-reduced-motion: reduce) { .city .c-comet, .city .c-glow { display: none; } .city .c-hub { animation: none; } }
+
+/* ---------- Cómo funciona ---------- */
+.como { position: relative; z-index: 1; }
+.pasos {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  width: min(1100px, 100% - 16%);
+  margin: 36px auto 0;
+  padding: 0;
+  counter-reset: paso;
+}
+.paso {
+  padding: 26px 24px;
+  border-radius: 22px;
+  text-align: left;
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .12);
+  backdrop-filter: blur(6px);
+  transition: transform .25s ease, border-color .25s ease;
+}
+.paso:hover { transform: translateY(-4px); border-color: rgba(181, 219, 46, .5); }
+.paso-num {
+  display: grid; place-items: center;
+  width: 44px; height: 44px;
+  margin-bottom: 14px;
+  border-radius: 14px;
+  background: #B5DB2E; color: #1B1370;
+  font-weight: 700; font-size: 20px;
+}
+.paso h3 { margin: 0 0 6px; font-size: 21px; font-weight: 700; }
+.paso p { margin: 0; font-size: 15px; line-height: 1.55; opacity: .8; }
+
+/* Mini-ruta de 4 paradas (la misma de la app) */
+.ruta-demo { width: min(760px, 100% - 16%); margin: 40px auto 0; }
+.rd-track { position: relative; display: block; height: 18px; }
+.rd-track::before { content: ''; position: absolute; left: 9px; right: 9px; top: 50%; border-top: 2px dashed rgba(255, 255, 255, .3); translate: 0 -50%; }
+.rd-fill { position: absolute; left: 9px; top: 50%; height: 3px; width: calc(100% - 18px); translate: 0 -50%; background: #B5DB2E; border-radius: 3px; transform: scaleX(0); transform-origin: left; }
+.rd-n { position: absolute; top: 50%; left: calc((100% - 18px) * var(--i) / 3); width: 18px; height: 18px; translate: 0 -50%; border-radius: 50%; background: #1B1370; border: 3px solid rgba(255, 255, 255, .4); }
+.ruta-demo.visible .rd-fill { animation: rd-fill 4.5s ease-in-out .4s infinite; }
+.ruta-demo.visible .rd-n { animation: rd-node 4.5s ease-in-out .4s infinite; animation-delay: calc(.4s + var(--i) * .9s); }
+.rd-labels { display: flex; justify-content: space-between; margin-top: 12px; font-size: 13px; font-weight: 600; opacity: .8; }
+.rd-labels span:first-child { transform: translateX(-20%); }
+.rd-labels span:last-child { transform: translateX(20%); }
+@keyframes rd-fill { 0% { transform: scaleX(0); } 70%, 90% { transform: scaleX(1); } 100% { transform: scaleX(1); opacity: 0; } }
+@keyframes rd-node { 0%, 5% { background: #1B1370; border-color: rgba(255, 255, 255, .4); } 12%, 90% { background: #B5DB2E; border-color: #B5DB2E; } 100% { background: #1B1370; border-color: rgba(255, 255, 255, .4); } }
+
+/* ---------- Banda de acceso a la app ---------- */
+.acceso {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  width: min(1100px, 100% - 16%);
+  margin: 10px auto 70px;
+  padding: 28px 36px;
+  border-radius: 24px;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(90, 72, 214, .55), rgba(27, 19, 112, .6));
+  border: 1px solid rgba(255, 255, 255, .14);
+}
+.acceso h2 { margin: 0 0 4px; font-size: clamp(22px, 2.2vw, 28px); font-weight: 700; }
+.acceso p { margin: 0; opacity: .8; }
+.acceso-botones { display: flex; flex-wrap: wrap; gap: 12px; }
+.acceso .btn-principal { padding: 14px 28px; font-size: 16px; }
+.acceso .btn-secundario { padding: 14px 24px; font-size: 16px; }
+
+/* ---------- Celular ---------- */
+@media (max-width: 900px) {
+  .pasos { grid-template-columns: 1fr; width: min(560px, 100% - 10%); }
+  .ruta-demo { width: min(560px, 100% - 14%); }
+  .rd-labels { font-size: 11px; }
+  .acceso { width: min(560px, 100% - 10%); padding: 24px; text-align: center; justify-content: center; }
+  .acceso-botones { justify-content: center; }
+  .hero-city { width: 150%; }
+}
+
+/* Íconos de contacto (PNG naranja) en blanco, como el resto */
+.icono-contacto img { filter: brightness(0) invert(1); opacity: .9; }
