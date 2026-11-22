@@ -34,8 +34,8 @@
   const B = { b5: [4.750, -74.130], b6: [4.725, -74.150], b7: [4.700, -74.180], b8: [4.665, -74.195], b9: [4.630, -74.205], b10: [4.600, -74.200], b11: [4.575, -74.190], b12: [4.545, -74.175] };
   const ZONAS = [
     { nombre: 'Bogotá', color: '181, 219, 46', label: [4.73, -74.07], coords: [[4.795, -74.030], [4.805, -74.065], [4.800, -74.100], [4.780, -74.118], B.b5, B.b6, B.b7, B.b8, B.b9, B.b10, B.b11, B.b12, [4.510, -74.150], [4.480, -74.120], [4.470, -74.090], [4.500, -74.065], [4.550, -74.060], [4.600, -74.045], [4.655, -74.035], [4.725, -74.020]] },
-    { nombre: 'Funza', color: '255, 214, 10', label: [4.712, -74.215], coords: [B.b5, B.b6, B.b7, B.b8, [4.655, -74.250], [4.700, -74.262], [4.760, -74.245], [4.768, -74.195], [4.760, -74.160]] },
-    { nombre: 'Soacha', color: '45, 212, 240', label: [4.585, -74.245], coords: [B.b8, B.b9, B.b10, B.b11, B.b12, [4.525, -74.200], [4.520, -74.245], [4.555, -74.285], [4.610, -74.280], [4.655, -74.250]] },
+    { nombre: 'Funza', color: '255, 214, 10', label: [4.752, -74.18], coords: [B.b5, B.b6, B.b7, B.b8, [4.655, -74.250], [4.700, -74.262], [4.760, -74.245], [4.768, -74.195], [4.760, -74.160]] },
+    { nombre: 'Soacha', color: '45, 212, 240', label: [4.54, -74.262], coords: [B.b8, B.b9, B.b10, B.b11, B.b12, [4.525, -74.200], [4.520, -74.245], [4.555, -74.285], [4.610, -74.280], [4.655, -74.250]] },
   ];
   // Avenidas principales (trazado aproximado)
   const AV = [
@@ -93,21 +93,24 @@
   const OSM = window.BOGOTA_CALLES;
   const dec = (arr) => arr.map((f) => { const o = []; for (let i = 0; i < f.length; i += 2) o.push([f[i] / 1e4, f[i + 1] / 1e4]); return o; });
   const calleLen = (pts) => pts.reduce((s, p, i) => (i ? s + Math.hypot(p[0] - pts[i - 1][0], p[1] - pts[i - 1][1]) : 0), 0);
-  let rutasAv = avenidas, rutasCa = calles;
+  let rutasAv = avenidas, rutasCa = calles, rutasPeriferia = [];
   if (OSM) {
     avenidas = dec(OSM.av);
     calles.length = 0; calles.push(...dec(OSM.ca));
     // para las entregas: tramos con algo de recorrido
     rutasAv = avenidas.filter((p) => calleLen(p) > 0.006);
     rutasCa = calles.filter((p) => calleLen(p) > 0.004);
+    // calles de Funza y Soacha: una parte fija de las entregas va allá
+    rutasPeriferia = calles.filter((p) => calleLen(p) > 0.0015 && (pip(p[0], ZONAS[1].coords) || pip(p[0], ZONAS[2].coords)));
   }
 
   // Entregas: tramos de calles o avenidas, en cualquiera de las tres zonas
   function rng(seed) { return () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646; }
   const rnd = rng(7);
   function nuevaEntrega(t) {
-    const usaAv = rnd() < 0.45;
-    const pool = usaAv ? rutasAv : rutasCa;
+    const r0 = rnd();
+    const usaAv = r0 < 0.4;
+    const pool = !usaAv && r0 < 0.65 && rutasPeriferia.length ? rutasPeriferia : usaAv ? rutasAv : rutasCa;
     let tramo = dens(pool[Math.floor(rnd() * pool.length)], 0.0012);
     if (tramo.length > 60) { const s0 = Math.floor(rnd() * (tramo.length - 60)); tramo = tramo.slice(s0, s0 + 60); }
     if (rnd() < 0.5) tramo = tramo.reverse();
