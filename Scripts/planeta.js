@@ -36,7 +36,7 @@
     rumbo: 20,         // hacia dónde mira (0 = norte)
     picada: 46,        // grados que mira hacia abajo
     ladeo: -16,         // giro de la vista (horizonte inclinado)
-    lente: 0.78,       // distancia focal (más = más zoom)
+    lente: 0.7,       // distancia focal (más = más zoom)
     periodo: 40,       // segundos de un vaivén completo
     entregas: 46,      // entregas simultáneas recorriendo las calles
   };
