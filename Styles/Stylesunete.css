@@ -403,8 +403,8 @@
 }
 .mc-chip[data-zona="todas"]  { --c: #FFFFFF; }
 .mc-chip[data-zona="bogota"] { --c: #B5DB2E; }
-.mc-chip[data-zona="funza"]  { --c: #FFD60A; }
-.mc-chip[data-zona="soacha"] { --c: #2DD4F0; }
+.mc-chip[data-zona="funza"]  { --c: #D7F25A; }
+.mc-chip[data-zona="soacha"] { --c: #A99BFF; }
 .mc-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
 .mc-chip:hover { color: var(--blanco); background: rgba(255, 255, 255, .08); }
 .mc-chip:focus-visible { outline: 2px solid var(--verde); outline-offset: 2px; }

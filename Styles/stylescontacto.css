@@ -155,14 +155,14 @@
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: #FF8A1F;
+    background: #B5DB2E;
     border: 3px solid #fff;
-    box-shadow: 0 0 14px 3px rgba(255, 138, 31, .85), 0 0 0 0 rgba(255, 138, 31, .55);
+    box-shadow: 0 0 14px 3px rgba(181, 219, 46, .85), 0 0 0 0 rgba(181, 219, 46, .55);
     animation: punto-pulso 2s ease-out infinite;
 }
 @keyframes punto-pulso {
-    0%   { box-shadow: 0 0 14px 3px rgba(255, 138, 31, .85), 0 0 0 0 rgba(255, 138, 31, .55); }
-    100% { box-shadow: 0 0 14px 3px rgba(255, 138, 31, .85), 0 0 0 28px rgba(255, 138, 31, 0); }
+    0%   { box-shadow: 0 0 14px 3px rgba(181, 219, 46, .85), 0 0 0 0 rgba(181, 219, 46, .55); }
+    100% { box-shadow: 0 0 14px 3px rgba(181, 219, 46, .85), 0 0 0 28px rgba(181, 219, 46, 0); }
 }
 
 .mapa-card h3 { margin: 0 0 8px; font-size: clamp(22px, 2.6vw, 26px); font-weight: 700; color: var(--blanco); }

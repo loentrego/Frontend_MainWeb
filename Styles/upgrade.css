@@ -131,3 +131,133 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 
 /* Íconos de contacto (PNG naranja) en blanco, como el resto */
 .icono-contacto img { filter: brightness(0) invert(1); opacity: .9; }
+
+/* =====================================================================
+   Tarjetas: un solo lenguaje en toda la web
+   Vidrio índigo, trama de puntos en una esquina, filo lima arriba y
+   números/íconos en lima. Sin colores sueltos.
+   ===================================================================== */
+:root {
+  --tarjeta-borde: rgba(255, 255, 255, .12);
+  --tarjeta-fondo: linear-gradient(165deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .03) 60%);
+  --tarjeta-puntos: radial-gradient(circle, rgba(255, 255, 255, .22) 1px, transparent 1.5px);
+}
+
+/* --- Condiciones (inicio): cobertura y paquetes --- */
+.cobertura, .condicion-paquete {
+  position: relative;
+  isolation: isolate;
+  border-radius: 28px !important;
+  border: 1px solid var(--tarjeta-borde) !important;
+  background: var(--tarjeta-fondo), rgba(27, 19, 112, .35) !important;
+  box-shadow: 0 30px 60px -30px rgba(5, 2, 40, .7), inset 0 1px 0 rgba(255, 255, 255, .08);
+  overflow: hidden;
+}
+.cobertura::before, .condicion-paquete::before {           /* trama de puntos en la esquina */
+  content: ''; position: absolute; z-index: -1; right: 0; top: 0; width: 46%; height: 70%;
+  background-image: var(--tarjeta-puntos); background-size: 16px 16px;
+  -webkit-mask: radial-gradient(100% 100% at 100% 0%, #000, transparent 75%);
+          mask: radial-gradient(100% 100% at 100% 0%, #000, transparent 75%);
+  pointer-events: none;
+}
+.cobertura::after, .condicion-paquete::after {             /* filo lima arriba */
+  content: ''; position: absolute; left: 32px; right: 32px; top: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #B5DB2E 30%, #D7F25A 70%, transparent);
+  opacity: .75; pointer-events: none;
+}
+.condicion-num {
+  background: #B5DB2E !important; color: #1B1370 !important; border: none !important;
+  box-shadow: 0 0 0 6px rgba(181, 219, 46, .14);
+  font-weight: 700;
+}
+.limite, .tarifa {
+  border-radius: 20px !important;
+  background: linear-gradient(160deg, rgba(181, 219, 46, .12), rgba(255, 255, 255, .04) 55%) !important;
+  border: 1px solid rgba(181, 219, 46, .28) !important;
+  border-left-width: 1px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+/* --- Nosotros: tarjetas de cada año --- */
+.año-frente {
+  background:
+    var(--tarjeta-puntos) 0 0 / 16px 16px,
+    radial-gradient(120% 90% at 50% 0%, rgba(181, 219, 46, .14), transparent 60%),
+    rgba(27, 19, 112, .45) !important;
+  border-color: var(--tarjeta-borde) !important;
+}
+.año-frente { -webkit-mask: none; }
+.año-frente::after {                                         /* invitación en lugar del círculo vacío */
+  content: 'Ver el año  →' !important;
+  width: auto !important; height: auto !important;
+  padding: 6px 14px; border-radius: 999px !important;
+  font-size: 12.5px; font-weight: 600; color: #D7F25A;
+  background: rgba(181, 219, 46, .1) !important;
+  border: 1px solid rgba(181, 219, 46, .35) !important;
+  white-space: nowrap;
+}
+.año-reverso {
+  isolation: isolate;
+  background:
+    radial-gradient(90% 70% at 100% 0%, rgba(181, 219, 46, .16), transparent 60%),
+    var(--tarjeta-fondo), rgba(27, 19, 112, .55) !important;
+  border: 1px solid rgba(181, 219, 46, .35) !important;
+}
+.año-reverso::before {                                       /* año grande de marca de agua */
+  content: attr(data-anio);
+  position: absolute; z-index: -1; right: 18px; top: 4px;
+  font-size: clamp(64px, 8vw, 110px); font-weight: 700; line-height: 1;
+  color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .12);
+  pointer-events: none;
+}
+.año-reverso::after {                                        /* filo lima arriba */
+  content: ''; position: absolute; left: 26px; right: 26px; top: 0; height: 2px;
+  background: linear-gradient(90deg, #B5DB2E, #D7F25A 60%, transparent);
+}
+.año-cifras { gap: 12px !important; border-top: none !important; padding-top: 14px !important; }
+.cifra {
+  padding: 12px 14px; border-radius: 16px;
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .1);
+}
+.cifra-icono {
+  width: 38px !important; height: 38px !important; border-radius: 12px !important;
+  background: rgba(181, 219, 46, .14) !important; border: 1px solid rgba(181, 219, 46, .35) !important;
+  color: #B5DB2E;
+}
+.cifra-icono svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.cifra-num { color: #fff !important; font-size: 20px !important; }
+@media (max-width: 900px) {
+  .año-reverso::before { font-size: 64px; }
+  .cifra { padding: 10px 12px; }
+}
+
+/* --- Únete: tarjeta del deslizador (cobertura / tamaño) --- */
+.mini-slider {
+  position: relative; isolation: isolate;
+  border-radius: 28px !important;
+  border: 1px solid var(--tarjeta-borde) !important;
+  background: var(--tarjeta-fondo), rgba(27, 19, 112, .35) !important;
+  box-shadow: 0 30px 60px -30px rgba(5, 2, 40, .7), inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+.mini-slider::before {
+  content: ''; position: absolute; z-index: -1; right: 0; top: 0; width: 50%; height: 70%; border-top-right-radius: 28px;
+  background-image: var(--tarjeta-puntos); background-size: 16px 16px;
+  -webkit-mask: radial-gradient(100% 100% at 100% 0%, #000, transparent 75%);
+          mask: radial-gradient(100% 100% at 100% 0%, #000, transparent 75%);
+  pointer-events: none;
+}
+.mini-slider::after {
+  content: ''; position: absolute; left: 28px; right: 28px; top: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #B5DB2E 30%, #D7F25A 70%, transparent); opacity: .75;
+}
+.mp-caja { border-radius: 20px !important; }
+/* Celular: las tres cifras en una fila compacta para que no se corten */
+@media (max-width: 600px) {
+  .año-card.expandida { height: 560px !important; }
+  .año-reverso { padding: 22px 18px 18px !important; }
+  .año-cifras { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px !important; }
+  .cifra { flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px; }
+  .cifra-icono { width: 32px !important; height: 32px !important; }
+  .cifra-num { font-size: 17px !important; }
+}

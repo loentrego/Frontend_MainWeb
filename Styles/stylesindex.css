@@ -560,8 +560,8 @@ img { display: block; max-width: 100%; }
 /* Color de cada zona (antes iba en línea dentro del HTML) */
 .zona-btn[data-zona="todas"]  { --c: #FFFFFF; }
 .zona-btn[data-zona="bogota"] { --c: #B5DB2E; }
-.zona-btn[data-zona="funza"]  { --c: #FFD60A; }
-.zona-btn[data-zona="soacha"] { --c: #2DD4F0; }
+.zona-btn[data-zona="funza"]  { --c: #D7F25A; }
+.zona-btn[data-zona="soacha"] { --c: #A99BFF; }
 
 .zona-btn i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
 .zona-btn:hover { border-color: var(--c); transform: translateY(-2px); }
