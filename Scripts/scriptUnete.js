@@ -46,7 +46,7 @@
             B.b5, B.b6, B.b7, B.b8, B.b9, B.b10, B.b11, B.b12,
             [4.510, -74.150], [4.480, -74.120], [4.470, -74.090], [4.500, -74.065],
             [4.550, -74.060], [4.600, -74.045], [4.655, -74.035], [4.725, -74.020] ] },
-        funza: { nombre: 'Funza', color: '#FFB088', tarifa: 10000, recargo: 0, coords: [
+        funza: { nombre: 'Funza', color: '#FF8A1F', tarifa: 10000, recargo: 0, coords: [
             B.b5, B.b6, B.b7, B.b8,
             [4.655, -74.250], [4.700, -74.262], [4.760, -74.245], [4.768, -74.195], [4.760, -74.160] ] },
         soacha: { nombre: 'Soacha', color: '#A99BFF', tarifa: 10000, recargo: 0, coords: [
