@@ -12,8 +12,10 @@
     <link rel="stylesheet" href="Styles/stylesindex.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Nunito:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="IMG/Minilogo-transparencia.png">
-    <link rel="stylesheet" href="Styles/upgrade.css?v=8">
-    <link rel="preload" href="Scripts/bogota-calles.txt?v=1" as="fetch" crossorigin="anonymous">
+    <link rel="stylesheet" href="Styles/upgrade.css?v=9">
+    <!-- El planeta es una imagen ya dibujada: se precarga la de cada dispositivo -->
+    <link rel="preload" href="IMG/planeta-escritorio.webp" as="image" type="image/webp" media="(min-width: 901px)">
+    <link rel="preload" href="IMG/planeta-movil.webp" as="image" type="image/webp" media="(max-width: 900px)">
     <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
@@ -344,7 +346,7 @@
 </div>
 </main>
 
-<script src="Scripts/planeta.js?v=15" defer></script>
+<script src="Scripts/planeta.js?v=20" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
 <script src="Scripts/scriptindex.js" defer></script>
 

@@ -36,8 +36,12 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 /* Escritorio: vista apaisada, pegada al borde derecho de la pantalla */
 @media (min-width: 901px) {
   .hero-imagen { transform: none; justify-content: flex-end; align-self: stretch; }
+  /* primera pantalla: texto y botones centrados en altura */
+  .hero { min-height: calc(100vh - 107px); padding-block: 24px; align-items: center; }
   .planeta {
-    width: clamp(520px, 58vw, 1200px);
+    /* nunca más alto que la pantalla: así el texto queda centrado en altura */
+    width: min(58vw, 1200px, calc((100vh - 140px) * 1.25));
+    min-width: 480px;
     aspect-ratio: 5 / 4;
     margin-right: calc((min(1560px, 88vw) - 100vw) / 2);
     flex-shrink: 0;
