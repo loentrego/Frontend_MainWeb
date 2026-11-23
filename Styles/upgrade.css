@@ -7,7 +7,7 @@
 
 /* ---------- Paleta unificada ---------- */
 :root {
-  --naranja: #FF8A1F;   /* tercer color de la marca: naranja (acento cálido) */
+  --naranja: #FFB088;   /* tercer color de la marca: naranja (acento cálido) */
   --morado: #5A48D6;    /* antes morado: ahora el índigo claro de la marca */
 }
 .l2, .l6 { background: rgba(90, 72, 214, .5) !important; }
@@ -133,9 +133,9 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
   .hero-imagen { margin-top: 28px; }
   .planeta {
     width: 100vw; max-width: none; margin-inline: calc(50% - 50vw);
-    aspect-ratio: 2 / 1;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 80%, transparent 100%);
-            mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 80%, transparent 100%);
+    aspect-ratio: 8 / 5;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 88%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 88%, transparent 100%);
   }
   html, body { overflow-x: clip; }
 }
@@ -173,7 +173,7 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 }
 .cobertura::after, .condicion-paquete::after {             /* filo lima arriba */
   content: ''; position: absolute; left: 32px; right: 32px; top: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, #B5DB2E 30%, #FF8A1F 75%, transparent);
+  background: linear-gradient(90deg, transparent, #B5DB2E 30%, #FFB088 75%, transparent);
   opacity: .75; pointer-events: none;
 }
 .condicion-num {
@@ -223,7 +223,7 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 }
 .año-reverso::after {                                        /* filo lima arriba */
   content: ''; position: absolute; left: 26px; right: 26px; top: 0; height: 2px;
-  background: linear-gradient(90deg, #B5DB2E, #FF8A1F 65%, transparent);
+  background: linear-gradient(90deg, #B5DB2E, #FFB088 65%, transparent);
 }
 .año-cifras { gap: 12px !important; border-top: none !important; padding-top: 14px !important; }
 .cifra {
@@ -260,7 +260,7 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 }
 .mini-slider::after {
   content: ''; position: absolute; left: 28px; right: 28px; top: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, #B5DB2E 30%, #FF8A1F 75%, transparent); opacity: .75;
+  background: linear-gradient(90deg, transparent, #B5DB2E 30%, #FFB088 75%, transparent); opacity: .75;
 }
 .mp-caja { border-radius: 20px !important; }
 /* Celular: las tres cifras en una fila compacta para que no se corten */
@@ -288,9 +288,9 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
   .hero-imagen { justify-self: auto; width: 100%; display: flex; justify-content: center; margin-top: 12px; }
   .planeta {
     width: 100vw; min-width: 0; max-width: none; margin-inline: calc(50% - 50vw);
-    aspect-ratio: 2 / 1;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 80%, transparent 100%);
-            mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 80%, transparent 100%);
+    aspect-ratio: 8 / 5;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 88%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 88%, transparent 100%);
   }
   html, body { overflow-x: clip; }
 }
@@ -299,11 +299,7 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
    Fondo: solo la trama de puntos (sin brillos de colores en las esquinas)
    ===================================================================== */
 .luces { display: none !important; }
-.fusion-fondo::after, .fusion-fondo-nosotros::after {
-  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background-image: radial-gradient(circle, rgba(255, 255, 255, .11) 1px, transparent 1.6px);
-  background-size: 18px 18px;
-}
+/* la trama de puntos queda solo como recurso en las tarjetas (no en el fondo) */
 
 /* =====================================================================
    Tercer color: naranja. Lima = acción, naranja = acento cálido.
@@ -313,16 +309,16 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 .tipo-ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .t-verde   { background: var(--verde, #B5DB2E) !important; color: #1B1370 !important; }
 .t-verde .tipo-ico { background: #1B1370; color: #B5DB2E; }
-.t-naranja { background: #FF8A1F; color: #2A1400; }
-.t-naranja .tipo-ico { background: #2A1400; color: #FF8A1F; }
+.t-naranja { background: #FFB088; color: #3A1608; }
+.t-naranja .tipo-ico { background: #3A1608; color: #FFB088; }
 .t-blanco .tipo-ico { background: #3422A8; color: #fff; }
-.paso:nth-child(2) .paso-num { background: #FF8A1F !important; color: #2A1400 !important; box-shadow: 0 0 0 6px rgba(255, 138, 31, .16) !important; }
+.paso:nth-child(2) .paso-num { background: #FFB088 !important; color: #3A1608 !important; box-shadow: 0 0 0 6px rgba(255, 176, 136, .16) !important; }
 .paso:nth-child(3) .paso-num { background: #fff !important; color: #1B1370 !important; box-shadow: 0 0 0 6px rgba(255, 255, 255, .12) !important; }
-.paso:nth-child(2):hover { border-color: rgba(255, 138, 31, .55) !important; }
-.etiqueta { border-color: rgba(255, 138, 31, .55) !important; color: #FFB066 !important; }
-.ic-comercios { background: rgba(255, 138, 31, .16) !important; border-color: rgba(255, 138, 31, .4) !important; color: #FF8A1F !important; }
+.paso:nth-child(2):hover { border-color: rgba(255, 176, 136, .55) !important; }
+.etiqueta { border-color: rgba(255, 176, 136, .55) !important; color: #FFC2A3 !important; }
+.ic-comercios { background: rgba(255, 176, 136, .16) !important; border-color: rgba(255, 176, 136, .4) !important; color: #FFB088 !important; }
 .ic-repartidores { background: rgba(255, 255, 255, .1) !important; border-color: rgba(255, 255, 255, .25) !important; color: #fff !important; }
-.linea-acento { background: linear-gradient(90deg, #B5DB2E, #FF8A1F) !important; }
+.linea-acento { background: linear-gradient(90deg, #B5DB2E, #FFB088) !important; }
 
 /* =====================================================================
    Menú del celular: tarjeta flotante, el botón se vuelve una X
@@ -358,7 +354,7 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
   .header .menu a + a { margin-top: 2px; }
   .header .menu a::after { content: '→'; color: rgba(255, 255, 255, .45); transition: transform .2s, color .2s; }
   .header .menu a:hover { background: rgba(255, 255, 255, .07); }
-  .header .menu a:hover::after { transform: translateX(3px); color: #FF8A1F; }
+  .header .menu a:hover::after { transform: translateX(3px); color: #FFB088; }
   .header .menu a.activo { background: #B5DB2E; color: #1B1370 !important; }
   .header .menu a.activo::after { content: '●'; font-size: 10px; color: #1B1370; }
 }

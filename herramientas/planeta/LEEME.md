@@ -4,13 +4,13 @@ La web **no** dibuja el planeta en vivo. Usa dos archivos ya preparados:
 
 | Archivo | Qué es |
 |---------|--------|
-| `IMG/planeta-oblicuo.webp` (1500×1200) y `IMG/planeta-frontal.webp` (1600×800) | Lo fijo: estrellas, superficie, horizonte, calles reales y órbitas. |
+| `IMG/planeta-oblicuo.webp` (1500×1200) y `IMG/planeta-frontal.webp` (1600×1000) | Lo fijo: estrellas, superficie, horizonte, calles reales y órbitas. |
 | `Scripts/planeta-oblicuo.json` y `Scripts/planeta-frontal.json` | Unas 170 trayectorias por las calles, en píxeles de la imagen, más las órbitas de los satélites. |
 
 `Scripts/planeta.js` pone la imagen de fondo y anima encima las entregas, las
 llegadas y los satélites. La vista cambia en vivo al redimensionar la ventana:
 
-- **Hasta 900 px de ancho**: el planeta va solo, debajo del texto. Se usa la vista frontal, a todo el ancho y en formato 2:1.
+- **Hasta 900 px de ancho**: el planeta va solo, debajo del texto. Se usa la vista frontal, a todo el ancho y en formato 8:5.
 - **Más de 900 px**: el planeta va al lado del texto. Se usa la vista oblicua, en formato 5:4.
 
 ## Regenerar
@@ -33,7 +33,7 @@ Sirve para cambiar el ángulo, el encuadre o las calles. Necesita Python 3, Node
 
    ```bash
    node exp.js oblicuo 1500 1200 '{}' '0.57,0.5' .
-   node exp.js frontal 1600 800 '{"ladeo":0,"rumbo":0,"giroMapa":0,"picada":38,"altura":0.42,"atras":0.42,"lente":0.72,"mira":[4.625,-74.14]}' '0.5,0.24' .
+   node exp.js frontal 1600 1000 '{"ladeo":0,"rumbo":0,"giroMapa":0,"picada":42,"altura":0.42,"atras":0.42,"lente":0.84,"mira":[4.62,-74.14]}' '0.5,0.3' .
    ```
 
 4. Convierte los PNG a WebP (calidad 78) y copia los archivos a `IMG/` y `Scripts/`.

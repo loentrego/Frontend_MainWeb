@@ -5,7 +5,7 @@
     --azul-claro: #5A48D6;
     --verde: #B5DB2E;
     --verde-oscuro: #8DB01C;
-    --naranja: #FF8A1F;
+    --naranja: #FFB088;
     --morado: #9B5DE5;
     --blanco: #FFFFFF;
     --gris-suave: #F3F4FA;
@@ -560,7 +560,7 @@ img { display: block; max-width: 100%; }
 /* Color de cada zona (antes iba en línea dentro del HTML) */
 .zona-btn[data-zona="todas"]  { --c: #FFFFFF; }
 .zona-btn[data-zona="bogota"] { --c: #B5DB2E; }
-.zona-btn[data-zona="funza"]  { --c: #FF8A1F; }
+.zona-btn[data-zona="funza"]  { --c: #FFB088; }
 .zona-btn[data-zona="soacha"] { --c: #A99BFF; }
 
 .zona-btn i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
@@ -759,7 +759,7 @@ img { display: block; max-width: 100%; }
 
 .red img { width: 24px; height: 24px; }
 .red:hover { transform: translateY(-4px) rotate(-6deg); }
-.r-ig { background: linear-gradient(135deg, #FF8A1F, #E1306C); }
+.r-ig { background: linear-gradient(135deg, #FFB088, #E1306C); }
 .r-fb { background: #3B5BDB; }
 .r-in { background: var(--verde); }
 
@@ -1001,9 +1001,9 @@ img { display: block; max-width: 100%; }
 /* Luces distribuidas a lo largo de todo el bloque fusionado, para que crucen entre secciones */
 .l1 { background: rgba(181, 219, 46, .5);  left: -80px;  top: 6%;   animation-duration: 13s; }
 .l2 { background: rgba(154, 93, 229, .5);  right: -100px; top: 30%; animation-duration: 15s; animation-delay: -3s; }
-.l3 { background: rgba(255, 138, 31, .35); left: 42%;    top: 52%; width: 300px; height: 300px; animation-duration: 17s; animation-delay: -6s; }
+.l3 { background: rgba(255, 176, 136, .35); left: 42%;    top: 52%; width: 300px; height: 300px; animation-duration: 17s; animation-delay: -6s; }
 .l4 { background: rgba(181, 219, 46, .35); left: 6%;     top: 68%; animation-duration: 14s; animation-delay: -2s; }
-.l5 { background: rgba(255, 138, 31, .3);  right: 5%;    top: 82%; animation-duration: 16s; animation-delay: -4s; }
+.l5 { background: rgba(255, 176, 136, .3);  right: 5%;    top: 82%; animation-duration: 16s; animation-delay: -4s; }
 .l6 { background: rgba(154, 93, 229, .45); left: 48%;    top: 12%; width: 320px; height: 320px; animation-duration: 18s; animation-delay: -7s; }
 
 @keyframes flotar {
