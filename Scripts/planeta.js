@@ -131,7 +131,7 @@
     const v = canvas.dataset.vista || (alLado() ? 'oblicuo' : 'frontal');   // data-vista fuerza una vista
     if (v === variante) return;
     variante = v;
-    canvas.style.backgroundImage = `url(${base}IMG/planeta-${v}.png?v=10)`;
+    canvas.style.backgroundImage = `url(${base}IMG/planeta-${v}.png?v=11)`;
     entregas = []; pings.length = 0;
     const usar = (d) => {
       if (variante !== v) return;
@@ -141,7 +141,7 @@
     };
     if (cache[v]) { usar(cache[v]); return; }
     rutas = [];
-    fetch(`${base}Scripts/planeta-${v}.json?v=11`)
+    fetch(`${base}Scripts/planeta-${v}.json?v=12`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((d) => {
         d.rutasListas = d.rutas.map((r) => ({ a: r.a, d: r.d, p: deshacer(r.p) }));
