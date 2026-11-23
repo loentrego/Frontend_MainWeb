@@ -19,8 +19,13 @@
   const ctx = canvas.getContext('2d');
   const LIMA = '181, 219, 46';
   const ENTREGAS = 40;                                    // entregas a la vez
-  // misma regla que el CSS: hasta 900 px el planeta va solo (debajo del texto)
-  const solo = matchMedia('(max-width: 900px)');
+  // ¿El planeta va al lado del texto o solo? Se mira la disposición real en pantalla.
+  const texto = document.querySelector('.hero-texto');
+  const alLado = () => {
+    if (!texto) return !matchMedia('(max-width: 900px)').matches;
+    const a = canvas.getBoundingClientRect(), b = texto.getBoundingClientRect();
+    return a.top < b.bottom - 20 && a.bottom > b.top + 20 && a.left > b.left + 40;   // comparten altura y va a la derecha
+  };
   const base = canvas.dataset.base || '';
   canvas.style.backgroundSize = '100% 100%';
   let variante = '';
@@ -121,10 +126,10 @@
   const deshacer = (arr) => { const o = []; let x = 0, y = 0; for (let i = 0; i < arr.length; i += 2) { x += arr[i]; y += arr[i + 1]; o.push([x, y]); } return o; };
   const cache = {};
   function cargarVariante() {
-    const v = solo.matches ? 'frontal' : 'oblicuo';
+    const v = alLado() ? 'oblicuo' : 'frontal';
     if (v === variante) return;
     variante = v;
-    canvas.style.backgroundImage = `url(${base}IMG/planeta-${v}.webp)`;
+    canvas.style.backgroundImage = `url(${base}IMG/planeta-${v}.webp?v=2)`;
     entregas = []; pings.length = 0;
     const usar = (d) => {
       if (variante !== v) return;
@@ -134,7 +139,7 @@
     };
     if (cache[v]) { usar(cache[v]); return; }
     rutas = [];
-    fetch(`${base}Scripts/planeta-${v}.json?v=2`)
+    fetch(`${base}Scripts/planeta-${v}.json?v=3`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((d) => {
         d.rutasListas = d.rutas.map((r) => ({ a: r.a, d: r.d, p: deshacer(r.p) }));
@@ -143,6 +148,7 @@
       })
       .catch(() => { /* sin trayectorias: queda la imagen fija */ });
   }
-  solo.addEventListener('change', cargarVariante);
+  new ResizeObserver(() => requestAnimationFrame(cargarVariante)).observe(document.querySelector('.hero') || canvas);
+  window.addEventListener('resize', () => requestAnimationFrame(cargarVariante));
   cargarVariante();
 })();

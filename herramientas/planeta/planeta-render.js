@@ -226,7 +226,12 @@
   const uni = (a) => { const l = Math.hypot(...a); return [a[0] / l, a[1] / l, a[2] / l]; };
   const suma = (...vs) => vs.reduce((s, [k, v]) => [s[0] + k * v[0], s[1] + k * v[1], s[2] + k * v[2]], [0, 0, 0]);
   const esfera = (la, lo) => { const a = la * rad, b = lo * rad; return [Math.cos(a) * Math.cos(b), Math.cos(a) * Math.sin(b), Math.sin(a)]; };
-  const mundo = ([la, lo]) => esfera(C[0] + (la - C[0]) * K.escala, (lo - C[1]) * K.escala);
+  // giroMapa: gira la ciudad sobre el planeta (grados), sin mover la cámara
+  const mundo = ([la, lo]) => {
+    let dy = la - C[0], dx = lo - C[1];
+    if (K.giroMapa) { const g = K.giroMapa * rad, c = Math.cos(g), s = Math.sin(g); [dx, dy] = [dx * c - dy * s, dx * s + dy * c]; }
+    return esfera(C[0] + dy * K.escala, dx * K.escala);
+  };
 
   let PC, PCd, DV, RV, UV;   // posición de la cámara, su distancia, y sus ejes (adelante, derecha, arriba)
   function camara() {
