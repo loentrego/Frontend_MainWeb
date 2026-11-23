@@ -367,3 +367,6 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 /* Paso 2: lavanda clara con número oscuro · ícono de ecommerce sobre círculo oscuro como los demás */
 .paso:nth-child(2) .paso-num { background: #C3B9FF !important; color: #1B1370 !important; box-shadow: 0 0 0 6px rgba(195, 185, 255, .18) !important; }
 .t-azul .tipo-ico { background: #1B1370; color: #C3B9FF; }
+
+/* Planeta solo (frontal): sube para ocupar la mitad del espacio vacío que quedaba sobre él */
+@media (max-width: 900px) { .hero-imagen { margin-top: -16px; } }
