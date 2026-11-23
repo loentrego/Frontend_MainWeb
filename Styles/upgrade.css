@@ -7,7 +7,7 @@
 
 /* ---------- Paleta unificada ---------- */
 :root {
-  --naranja: #D7F25A;   /* antes naranja: ahora un lima claro (pareja del lima) */
+  --naranja: #FF8A1F;   /* tercer color de la marca: naranja (acento cálido) */
   --morado: #5A48D6;    /* antes morado: ahora el índigo claro de la marca */
 }
 .l2, .l6 { background: rgba(90, 72, 214, .5) !important; }
@@ -133,7 +133,7 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
   .hero-imagen { margin-top: 28px; }
   .planeta {
     width: 100vw; max-width: none; margin-inline: calc(50% - 50vw);
-    aspect-ratio: 16 / 7;
+    aspect-ratio: 2 / 1;
     -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 80%, transparent 100%);
             mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 80%, transparent 100%);
   }
@@ -173,7 +173,7 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 }
 .cobertura::after, .condicion-paquete::after {             /* filo lima arriba */
   content: ''; position: absolute; left: 32px; right: 32px; top: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, #B5DB2E 30%, #D7F25A 70%, transparent);
+  background: linear-gradient(90deg, transparent, #B5DB2E 30%, #FF8A1F 75%, transparent);
   opacity: .75; pointer-events: none;
 }
 .condicion-num {
@@ -223,7 +223,7 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 }
 .año-reverso::after {                                        /* filo lima arriba */
   content: ''; position: absolute; left: 26px; right: 26px; top: 0; height: 2px;
-  background: linear-gradient(90deg, #B5DB2E, #D7F25A 60%, transparent);
+  background: linear-gradient(90deg, #B5DB2E, #FF8A1F 65%, transparent);
 }
 .año-cifras { gap: 12px !important; border-top: none !important; padding-top: 14px !important; }
 .cifra {
@@ -260,7 +260,7 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 }
 .mini-slider::after {
   content: ''; position: absolute; left: 28px; right: 28px; top: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, #B5DB2E 30%, #D7F25A 70%, transparent); opacity: .75;
+  background: linear-gradient(90deg, transparent, #B5DB2E 30%, #FF8A1F 75%, transparent); opacity: .75;
 }
 .mp-caja { border-radius: 20px !important; }
 /* Celular: las tres cifras en una fila compacta para que no se corten */
@@ -288,9 +288,77 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
   .hero-imagen { justify-self: auto; width: 100%; display: flex; justify-content: center; margin-top: 12px; }
   .planeta {
     width: 100vw; min-width: 0; max-width: none; margin-inline: calc(50% - 50vw);
-    aspect-ratio: 16 / 7;
+    aspect-ratio: 2 / 1;
     -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 80%, transparent 100%);
             mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 80%, transparent 100%);
   }
   html, body { overflow-x: clip; }
+}
+
+/* =====================================================================
+   Fondo: solo la trama de puntos (sin brillos de colores en las esquinas)
+   ===================================================================== */
+.luces { display: none !important; }
+.fusion-fondo::after, .fusion-fondo-nosotros::after {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, .11) 1px, transparent 1.6px);
+  background-size: 18px 18px;
+}
+
+/* =====================================================================
+   Tercer color: naranja. Lima = acción, naranja = acento cálido.
+   ===================================================================== */
+.tipo { gap: 12px; }
+.tipo-ico { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0; }
+.tipo-ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.t-verde   { background: var(--verde, #B5DB2E) !important; color: #1B1370 !important; }
+.t-verde .tipo-ico { background: #1B1370; color: #B5DB2E; }
+.t-naranja { background: #FF8A1F; color: #2A1400; }
+.t-naranja .tipo-ico { background: #2A1400; color: #FF8A1F; }
+.t-blanco .tipo-ico { background: #3422A8; color: #fff; }
+.paso:nth-child(2) .paso-num { background: #FF8A1F !important; color: #2A1400 !important; box-shadow: 0 0 0 6px rgba(255, 138, 31, .16) !important; }
+.paso:nth-child(3) .paso-num { background: #fff !important; color: #1B1370 !important; box-shadow: 0 0 0 6px rgba(255, 255, 255, .12) !important; }
+.paso:nth-child(2):hover { border-color: rgba(255, 138, 31, .55) !important; }
+.etiqueta { border-color: rgba(255, 138, 31, .55) !important; color: #FFB066 !important; }
+.ic-comercios { background: rgba(255, 138, 31, .16) !important; border-color: rgba(255, 138, 31, .4) !important; color: #FF8A1F !important; }
+.ic-repartidores { background: rgba(255, 255, 255, .1) !important; border-color: rgba(255, 255, 255, .25) !important; color: #fff !important; }
+.linea-acento { background: linear-gradient(90deg, #B5DB2E, #FF8A1F) !important; }
+
+/* =====================================================================
+   Menú del celular: tarjeta flotante, el botón se vuelve una X
+   ===================================================================== */
+@media (max-width: 767px) {
+  .header { position: sticky; top: 0; z-index: 50; }
+  .menu-btn { position: relative; z-index: 2; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 12px; transition: background .2s; }
+  .menu-btn span { transition: transform .3s cubic-bezier(.2,.8,.2,1), opacity .2s; }
+  .menu-toggle:checked + .menu-btn { background: rgba(255, 255, 255, .1); }
+  .menu-toggle:checked + .menu-btn span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  .menu-toggle:checked + .menu-btn span:nth-child(2) { opacity: 0; }
+  .menu-toggle:checked + .menu-btn span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+  .header .menu {
+    top: 86px !important; left: 12px !important; right: 12px !important;
+    padding: 0 8px; border-radius: 22px;
+    background: rgba(27, 19, 112, .97) !important;
+    border: 1px solid rgba(255, 255, 255, 0);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    opacity: 0; transform: translateY(-10px) scale(.98); transform-origin: top right;
+    transition: max-height .35s ease, opacity .25s ease, transform .3s cubic-bezier(.2,.8,.2,1), padding .3s ease, box-shadow .3s ease !important;
+    pointer-events: none;
+  }
+  .menu-toggle:checked ~ .menu {
+    max-height: 420px !important; padding: 8px; opacity: 1; transform: none; pointer-events: auto;
+    border-color: rgba(255, 255, 255, .14);
+    box-shadow: 0 24px 50px -20px rgba(0, 0, 0, .6), 0 0 0 100vmax rgba(8, 4, 40, .55);   /* oscurece lo de atrás */
+  }
+  .header .menu a {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 15px 16px !important; border-radius: 14px; font-size: 17px; font-weight: 600;
+    color: #fff; border: 0 !important;
+  }
+  .header .menu a + a { margin-top: 2px; }
+  .header .menu a::after { content: '→'; color: rgba(255, 255, 255, .45); transition: transform .2s, color .2s; }
+  .header .menu a:hover { background: rgba(255, 255, 255, .07); }
+  .header .menu a:hover::after { transform: translateX(3px); color: #FF8A1F; }
+  .header .menu a.activo { background: #B5DB2E; color: #1B1370 !important; }
+  .header .menu a.activo::after { content: '●'; font-size: 10px; color: #1B1370; }
 }

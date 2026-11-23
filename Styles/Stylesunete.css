@@ -403,7 +403,7 @@
 }
 .mc-chip[data-zona="todas"]  { --c: #FFFFFF; }
 .mc-chip[data-zona="bogota"] { --c: #B5DB2E; }
-.mc-chip[data-zona="funza"]  { --c: #D7F25A; }
+.mc-chip[data-zona="funza"]  { --c: #FF8A1F; }
 .mc-chip[data-zona="soacha"] { --c: #A99BFF; }
 .mc-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
 .mc-chip:hover { color: var(--blanco); background: rgba(255, 255, 255, .08); }
