@@ -4,7 +4,7 @@ La web **no** dibuja el planeta en vivo. Usa dos archivos ya preparados:
 
 | Archivo | Qué es |
 |---------|--------|
-| `IMG/planeta-oblicuo.webp` (1500×1200) y `IMG/planeta-frontal.webp` (1600×1000) | Lo fijo: estrellas, superficie, horizonte, calles reales y órbitas. |
+| `IMG/planeta-oblicuo.png` (1500×1200) y `IMG/planeta-frontal.png` (1600×1000) | Lo fijo: estrellas, superficie, horizonte, calles reales y órbitas. |
 | `Scripts/planeta-oblicuo.json` y `Scripts/planeta-frontal.json` | Unas 170 trayectorias por las calles, en píxeles de la imagen, más las órbitas de los satélites. |
 
 `Scripts/planeta.js` pone la imagen de fondo y anima encima las entregas, las

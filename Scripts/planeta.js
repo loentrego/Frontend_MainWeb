@@ -3,8 +3,8 @@
 //
 //  Lo fijo (superficie, horizonte, calles reales y órbitas) es una imagen
 //  ya dibujada. Hay dos vistas y se cambia en vivo al redimensionar:
-//    · oblicua (IMG/planeta-oblicuo.webp): cuando el planeta va al lado del texto.
-//    · frontal (IMG/planeta-frontal.webp): cuando va solo, a todo el ancho.
+//    · oblicua (IMG/planeta-oblicuo.png): cuando el planeta va al lado del texto.
+//    · frontal (IMG/planeta-frontal.png): cuando va solo, a todo el ancho.
 //  Encima solo se animan las entregas, siguiendo trayectorias ya calculadas
 //  sobre las calles (Scripts/planeta-*.json), las llegadas y los satélites.
 //  Así el navegador no descarga ni procesa las calles.
@@ -129,7 +129,7 @@
     const v = canvas.dataset.vista || (alLado() ? 'oblicuo' : 'frontal');   // data-vista fuerza una vista
     if (v === variante) return;
     variante = v;
-    canvas.style.backgroundImage = `url(${base}IMG/planeta-${v}.webp?v=4)`;
+    canvas.style.backgroundImage = `url(${base}IMG/planeta-${v}.png?v=5)`;
     entregas = []; pings.length = 0;
     const usar = (d) => {
       if (variante !== v) return;
@@ -139,7 +139,7 @@
     };
     if (cache[v]) { usar(cache[v]); return; }
     rutas = [];
-    fetch(`${base}Scripts/planeta-${v}.json?v=5`)
+    fetch(`${base}Scripts/planeta-${v}.json?v=6`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((d) => {
         d.rutasListas = d.rutas.map((r) => ({ a: r.a, d: r.d, p: deshacer(r.p) }));

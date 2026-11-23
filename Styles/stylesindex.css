@@ -561,7 +561,7 @@ img { display: block; max-width: 100%; }
 .zona-btn[data-zona="todas"]  { --c: #FFFFFF; }
 .zona-btn[data-zona="bogota"] { --c: #B5DB2E; }
 .zona-btn[data-zona="funza"]  { --c: #FF8A1F; }
-.zona-btn[data-zona="soacha"] { --c: #A99BFF; }
+.zona-btn[data-zona="soacha"] { --c: #4F8DFF; }
 
 .zona-btn i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
 .zona-btn:hover { border-color: var(--c); transform: translateY(-2px); }

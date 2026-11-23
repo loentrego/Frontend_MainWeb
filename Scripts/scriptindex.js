@@ -84,7 +84,7 @@
         funza: { nombre: 'Funza', color: '#FF8A1F', texto: 'Funza, Cundinamarca', tarifa: 10000, recargo: 0, coords: [
             B.b5, B.b6, B.b7, B.b8,
             [4.655, -74.250], [4.700, -74.262], [4.760, -74.245], [4.768, -74.195], [4.760, -74.160] ] },
-        soacha: { nombre: 'Soacha', color: '#A99BFF', texto: 'Soacha, Cundinamarca', tarifa: 10000, recargo: 0, coords: [
+        soacha: { nombre: 'Soacha', color: '#4F8DFF', texto: 'Soacha, Cundinamarca', tarifa: 10000, recargo: 0, coords: [
             B.b8, B.b9, B.b10, B.b11, B.b12,
             [4.525, -74.200], [4.520, -74.245], [4.555, -74.285], [4.610, -74.280], [4.655, -74.250] ] }
     };
