@@ -364,3 +364,6 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 .t-azul .tipo-ico { background: #fff; color: #5A48D6; }
 .paso:nth-child(2) .paso-num { background: #5A48D6 !important; color: #fff !important; box-shadow: 0 0 0 6px rgba(90, 72, 214, .22) !important; }
 .paso:nth-child(2):hover { border-color: rgba(90, 72, 214, .7) !important; }
+/* Paso 2: lavanda clara con número oscuro · ícono de ecommerce sobre círculo oscuro como los demás */
+.paso:nth-child(2) .paso-num { background: #C3B9FF !important; color: #1B1370 !important; box-shadow: 0 0 0 6px rgba(195, 185, 255, .18) !important; }
+.t-azul .tipo-ico { background: #1B1370; color: #C3B9FF; }
