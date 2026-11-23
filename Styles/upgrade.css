@@ -315,7 +315,7 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 .paso:nth-child(2) .paso-num { background: #FF8A1F !important; color: #2A1400 !important; box-shadow: 0 0 0 6px rgba(255, 138, 31, .16) !important; }
 .paso:nth-child(3) .paso-num { background: #fff !important; color: #1B1370 !important; box-shadow: 0 0 0 6px rgba(255, 255, 255, .12) !important; }
 .paso:nth-child(2):hover { border-color: rgba(255, 138, 31, .55) !important; }
-.etiqueta { border-color: rgba(255, 138, 31, .55) !important; color: #FFB066 !important; }
+.etiqueta { border-color: rgba(181, 219, 46, .55) !important; color: #B5DB2E !important; }
 .ic-comercios { background: rgba(255, 138, 31, .16) !important; border-color: rgba(255, 138, 31, .4) !important; color: #FF8A1F !important; }
 .ic-repartidores { background: rgba(255, 255, 255, .1) !important; border-color: rgba(255, 255, 255, .25) !important; color: #fff !important; }
 .linea-acento { background: linear-gradient(90deg, #B5DB2E, #FF8A1F) !important; }
