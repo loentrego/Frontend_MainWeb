@@ -227,15 +227,16 @@
   const suma = (...vs) => vs.reduce((s, [k, v]) => [s[0] + k * v[0], s[1] + k * v[1], s[2] + k * v[2]], [0, 0, 0]);
   const esfera = (la, lo) => { const a = la * rad, b = lo * rad; return [Math.cos(a) * Math.cos(b), Math.cos(a) * Math.sin(b), Math.sin(a)]; };
   // giroMapa: gira la ciudad sobre el planeta (grados), sin mover la cámara
-  const mundo = ([la, lo]) => {
+  const mundo = ([la, lo], sinDesp) => {
     let dy = la - C[0], dx = lo - C[1];
     if (K.giroMapa) { const g = K.giroMapa * rad, c = Math.cos(g), s = Math.sin(g); [dx, dy] = [dx * c - dy * s, dx * s + dy * c]; }
-    return esfera(C[0] + dy * K.escala, dx * K.escala);
+    // despLat / despLon: corren solo la ciudad sobre la superficie (grados del planeta), sin mover cámara ni planeta
+    return esfera(C[0] + dy * K.escala + (sinDesp ? 0 : K.despLat || 0), dx * K.escala + (sinDesp ? 0 : K.despLon || 0));
   };
 
   let PC, PCd, DV, RV, UV;   // posición de la cámara, su distancia, y sus ejes (adelante, derecha, arriba)
   function camara() {
-    const T = mundo(K.mira);                         // punto de la superficie bajo la mira
+    const T = mundo(K.mira, true);   // la cámara no sigue el desplazamiento de la ciudad                         // punto de la superficie bajo la mira
     const lat = Math.asin(T[2]), lon = Math.atan2(T[1], T[0]);
     const E = [-Math.sin(lon), Math.cos(lon), 0];
     const N = [-Math.sin(lat) * Math.cos(lon), -Math.sin(lat) * Math.sin(lon), Math.cos(lat)];
