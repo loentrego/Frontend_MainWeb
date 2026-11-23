@@ -18,7 +18,9 @@
   if (!canvas || !canvas.getContext) return;
   const ctx = canvas.getContext('2d');
   const LIMA = '181, 219, 46';
-  const ENTREGAS = 40;                                    // entregas a la vez
+  // Entregas a la vez y llegadas: la vista frontal (planeta solo) va más calmada, sin satélites ni órbitas
+  const ENTREGAS = { oblicuo: 40, frontal: 14 };
+  const LLEGADAS = { oblicuo: 0.3, frontal: 0.1 };
   // ¿El planeta va al lado del texto o solo? Se mira la disposición real en pantalla.
   const texto = document.querySelector('.hero-texto');
   const alLado = () => {
@@ -51,7 +53,7 @@
     const pts = e.r.p, n = pts.length - 1;
     const k = (t - e.t0) / e.r.d;
     if (k < 0) return true;
-    if (k > 1) { if (k < 1.3 && rnd() < 0.3) pings.push({ p: e.reves ? pts[0] : pts[n], t }); return false; }
+    if (k > 1) { if (k < 1.3 && rnd() < (LLEGADAS[variante] ?? 0.3)) pings.push({ p: e.reves ? pts[0] : pts[n], t }); return false; }
     const len = Math.min(16, Math.max(4, n * 0.4)), head = k * (n + len), tail = head - len;
     const en = (f) => {            // posición continua sobre la trayectoria
       if (e.reves) f = n - f;
@@ -97,9 +99,9 @@
     const t = ms / 1000;
     ctx.clearRect(0, 0, W, H);
     if (!rutas.length) return;
-    dibujarSatelites(t);
+    if (variante !== 'frontal') dibujarSatelites(t);
     ctx.lineCap = 'round';
-    while (entregas.length < ENTREGAS) entregas.push(nueva(t));
+    while (entregas.length < (ENTREGAS[variante] ?? 40)) entregas.push(nueva(t));
     entregas = entregas.filter((e) => dibujarEntrega(e, t));
     for (let i = pings.length - 1; i >= 0; i--) {
       const pg = pings[i], k = (t - pg.t) / 1.2;
@@ -129,7 +131,7 @@
     const v = canvas.dataset.vista || (alLado() ? 'oblicuo' : 'frontal');   // data-vista fuerza una vista
     if (v === variante) return;
     variante = v;
-    canvas.style.backgroundImage = `url(${base}IMG/planeta-${v}.png?v=8)`;
+    canvas.style.backgroundImage = `url(${base}IMG/planeta-${v}.png?v=9)`;
     entregas = []; pings.length = 0;
     const usar = (d) => {
       if (variante !== v) return;
@@ -139,7 +141,7 @@
     };
     if (cache[v]) { usar(cache[v]); return; }
     rutas = [];
-    fetch(`${base}Scripts/planeta-${v}.json?v=9`)
+    fetch(`${base}Scripts/planeta-${v}.json?v=10`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((d) => {
         d.rutasListas = d.rutas.map((r) => ({ a: r.a, d: r.d, p: deshacer(r.p) }));

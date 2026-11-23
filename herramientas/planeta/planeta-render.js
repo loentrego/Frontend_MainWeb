@@ -456,7 +456,7 @@
 
     pintarCalles(c);
     if (recorte) c.restore();
-    if (HZ) lineasOrbitas(c);
+    if (HZ && !K.sinOrbitas) lineasOrbitas(c);   // sinOrbitas: vista sin órbitas (frontal)
     capaLista = true;
   }
 

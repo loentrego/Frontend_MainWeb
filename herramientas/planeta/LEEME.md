@@ -36,7 +36,7 @@ Sirve para cambiar el ángulo, el encuadre o las calles. Necesita Python 3, Node
    node exp.js frontal 1600 1000 '{"ladeo":0,"rumbo":0,"giroMapa":0,"picada":42,"altura":0.42,"atras":0.42,"lente":0.84,"mira":[4.62,-74.14]}' '0.5,0.3' .
    ```
 
-4. Comprime los PNG con `pngquant --quality 80-98 --speed 1` (conserva la transparencia: el espacio debe quedar transparente, no negro) y copia los archivos a `IMG/` y `Scripts/`. Vista frontal actual: `"despLat":3.8`; oblicua: `{"despLon":-0.3,"despLat":2.6}`.
+4. Comprime los PNG con `pngquant --quality 80-98 --speed 1` (conserva la transparencia: el espacio debe quedar transparente, no negro) y copia los archivos a `IMG/` y `Scripts/`. Vista frontal actual: `"despLat":3.8,"sinOrbitas":true`; oblicua: `{"despLon":-0.3,"despLat":2.6,"giroMapa":-12}`.
 
 Las perillas `despLat` y `despLon` corren solo la ciudad sobre el planeta (la cámara no se mueve). La perilla `giroMapa` gira la ciudad sobre el planeta sin mover la cámara: así cabe acostada en la vista frontal. Las perillas (`escala`, `mira`, `altura`, `atras`, `rumbo`, `picada`, `ladeo`, `lente`)
 están documentadas al inicio de `planeta-render.js`.
