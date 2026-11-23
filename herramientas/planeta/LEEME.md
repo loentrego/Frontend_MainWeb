@@ -4,12 +4,14 @@ La web **no** dibuja el planeta en vivo. Usa dos archivos ya preparados:
 
 | Archivo | Qué es |
 |---------|--------|
-| `IMG/planeta-escritorio.webp` (1500×1200) y `IMG/planeta-movil.webp` (1000×1000) | Lo fijo: estrellas, superficie, horizonte, calles reales y órbitas. |
-| `Scripts/planeta-escritorio.json` y `Scripts/planeta-movil.json` | Unas 170 trayectorias por las calles, en píxeles de la imagen, más las órbitas de los satélites. |
+| `IMG/planeta-oblicuo.webp` (1500×1200) y `IMG/planeta-frontal.webp` (1600×900) | Lo fijo: estrellas, superficie, horizonte, calles reales y órbitas. |
+| `Scripts/planeta-oblicuo.json` y `Scripts/planeta-frontal.json` | Unas 170 trayectorias por las calles, en píxeles de la imagen, más las órbitas de los satélites. |
 
 `Scripts/planeta.js` pone la imagen de fondo y anima encima las entregas, las
-llegadas y los satélites. En celular (≤ 900 px) se usa la vista frontal; en
-computador, la oblicua.
+llegadas y los satélites. La vista cambia en vivo al redimensionar la ventana:
+
+- **Hasta 900 px de ancho**: el planeta va solo, debajo del texto. Se usa la vista frontal, a todo el ancho y en formato 16:9.
+- **Más de 900 px**: el planeta va al lado del texto. Se usa la vista oblicua, en formato 5:4.
 
 ## Regenerar
 
@@ -30,8 +32,8 @@ Sirve para cambiar el ángulo, el encuadre o las calles. Necesita Python 3, Node
 3. Exporta cada variante. Los argumentos son: nombre, ancho, alto, perillas en JSON y centro.
 
    ```bash
-   node exp.js escritorio 1500 1200 '{}' '0.57,0.5' .
-   node exp.js movil 1000 1000 '{"ladeo":0,"rumbo":0,"picada":44,"lente":0.6,"mira":[4.625,-74.14]}' '0.5,0.47' .
+   node exp.js oblicuo 1500 1200 '{}' '0.57,0.5' .
+   node exp.js frontal 1600 900 '{"ladeo":0,"rumbo":0,"picada":36,"lente":0.55,"mira":[4.615,-74.14]}' '0.5,0.36' .
    ```
 
 4. Convierte los PNG a WebP (calidad 78) y copia los archivos a `IMG/` y `Scripts/`.

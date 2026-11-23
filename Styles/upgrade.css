@@ -41,7 +41,6 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
   .planeta {
     /* nunca más alto que la pantalla: así el texto queda centrado en altura */
     width: min(58vw, 1200px, calc((100vh - 140px) * 1.25));
-    min-width: 480px;
     aspect-ratio: 5 / 4;
     margin-right: calc((min(1560px, 88vw) - 100vw) / 2);
     flex-shrink: 0;
@@ -130,7 +129,15 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
   .acceso { width: min(560px, 100% - 10%); padding: 24px; text-align: center; justify-content: center; }
   .acceso-botones { justify-content: center; }
   .hero-imagen { width: 100%; }
-  .planeta { width: min(108%, 560px); margin: 0 auto; }
+  /* solo (debajo del texto): vista frontal a todo el ancho, apaisada */
+  .hero-imagen { margin-top: 28px; }
+  .planeta {
+    width: 100vw; max-width: none; margin-inline: calc(50% - 50vw);
+    aspect-ratio: 16 / 9;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 80%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 80%, transparent 100%);
+  }
+  html, body { overflow-x: clip; }
 }
 
 /* Íconos de contacto (PNG naranja) en blanco, como el resto */
@@ -265,3 +272,5 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
   .cifra-icono { width: 32px !important; height: 32px !important; }
   .cifra-num { font-size: 17px !important; }
 }
+/* lo que sobresale se recorta sin que el contenedor se pueda desplazar de lado */
+.fusion-fondo { overflow: clip !important; }

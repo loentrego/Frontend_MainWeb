@@ -2,7 +2,9 @@
 //  LoEntrego · Bogotá desde el cielo (versión liviana)
 //
 //  Lo fijo (superficie, horizonte, calles reales y órbitas) es una imagen
-//  ya dibujada: IMG/planeta-escritorio.webp o IMG/planeta-movil.webp.
+//  ya dibujada. Hay dos vistas y se cambia en vivo al redimensionar:
+//    · oblicua (IMG/planeta-oblicuo.webp): cuando el planeta va al lado del texto.
+//    · frontal (IMG/planeta-frontal.webp): cuando va solo, a todo el ancho.
 //  Encima solo se animan las entregas, siguiendo trayectorias ya calculadas
 //  sobre las calles (Scripts/planeta-*.json), las llegadas y los satélites.
 //  Así el navegador no descarga ni procesa las calles.
@@ -17,11 +19,11 @@
   const ctx = canvas.getContext('2d');
   const LIMA = '181, 219, 46';
   const ENTREGAS = 40;                                    // entregas a la vez
-  const movil = matchMedia('(max-width: 900px)').matches; // celular: vista frontal
-  const variante = movil ? 'movil' : 'escritorio';
+  // misma regla que el CSS: hasta 900 px el planeta va solo (debajo del texto)
+  const solo = matchMedia('(max-width: 900px)');
   const base = canvas.dataset.base || '';
-  canvas.style.backgroundImage = `url(${base}IMG/planeta-${variante}.webp)`;
   canvas.style.backgroundSize = '100% 100%';
+  let variante = '';
 
   let D = null, rutas = [], orbitas = [];
   let W = 0, H = 0, DPR = 1, sx = 1, sy = 1;
@@ -117,14 +119,30 @@
 
   // trayectorias: diferencias con el punto anterior -> píxeles de la imagen
   const deshacer = (arr) => { const o = []; let x = 0, y = 0; for (let i = 0; i < arr.length; i += 2) { x += arr[i]; y += arr[i + 1]; o.push([x, y]); } return o; };
-  fetch(`${base}Scripts/planeta-${variante}.json?v=1`)
-    .then((r) => (r.ok ? r.json() : Promise.reject()))
-    .then((d) => {
-      D = d;
-      rutas = d.rutas.map((r) => ({ a: r.a, d: r.d, p: deshacer(r.p) }));
-      orbitas = d.orbitas.map((o) => { const p = []; for (let i = 0; i < o.p.length; i += 3) p.push([o.p[i], o.p[i + 1], o.p[i + 2]]); return { vel: o.vel, fase: o.fase, p }; });
+  const cache = {};
+  function cargarVariante() {
+    const v = solo.matches ? 'frontal' : 'oblicuo';
+    if (v === variante) return;
+    variante = v;
+    canvas.style.backgroundImage = `url(${base}IMG/planeta-${v}.webp)`;
+    entregas = []; pings.length = 0;
+    const usar = (d) => {
+      if (variante !== v) return;
+      D = d; rutas = d.rutasListas; orbitas = d.orbitasListas;
       medir();
       if (reduce) cuadro(4000); else kick();
-    })
-    .catch(() => { /* sin trayectorias: queda la imagen fija */ });
+    };
+    if (cache[v]) { usar(cache[v]); return; }
+    rutas = [];
+    fetch(`${base}Scripts/planeta-${v}.json?v=2`)
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((d) => {
+        d.rutasListas = d.rutas.map((r) => ({ a: r.a, d: r.d, p: deshacer(r.p) }));
+        d.orbitasListas = d.orbitas.map((o) => { const p = []; for (let i = 0; i < o.p.length; i += 3) p.push([o.p[i], o.p[i + 1], o.p[i + 2]]); return { vel: o.vel, fase: o.fase, p }; });
+        cache[v] = d; usar(d);
+      })
+      .catch(() => { /* sin trayectorias: queda la imagen fija */ });
+  }
+  solo.addEventListener('change', cargarVariante);
+  cargarVariante();
 })();
