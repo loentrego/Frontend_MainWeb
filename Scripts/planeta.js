@@ -126,7 +126,7 @@
   const deshacer = (arr) => { const o = []; let x = 0, y = 0; for (let i = 0; i < arr.length; i += 2) { x += arr[i]; y += arr[i + 1]; o.push([x, y]); } return o; };
   const cache = {};
   function cargarVariante() {
-    const v = alLado() ? 'oblicuo' : 'frontal';
+    const v = canvas.dataset.vista || (alLado() ? 'oblicuo' : 'frontal');   // data-vista fuerza una vista
     if (v === variante) return;
     variante = v;
     canvas.style.backgroundImage = `url(${base}IMG/planeta-${v}.webp?v=2)`;
