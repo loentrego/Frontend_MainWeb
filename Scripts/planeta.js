@@ -19,8 +19,8 @@
   const ctx = canvas.getContext('2d');
   const LIMA = '181, 219, 46';
   // Entregas a la vez y llegadas: la vista frontal (planeta solo) va más calmada, sin satélites ni órbitas
-  const ENTREGAS = { oblicuo: 40, frontal: 14 };
-  const LLEGADAS = { oblicuo: 0.3, frontal: 0.1 };
+  const ENTREGAS = { oblicuo: 22, frontal: 9 };
+  const LLEGADAS = { oblicuo: 0.15, frontal: 0.06 };
   // ¿El planeta va al lado del texto o solo? Se mira la disposición real en pantalla.
   const texto = document.querySelector('.hero-texto');
   const alLado = () => {
