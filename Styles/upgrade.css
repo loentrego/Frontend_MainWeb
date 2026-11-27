@@ -386,11 +386,3 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 }
 /* El desvanecido del pie terminaba en el azul de marca (#3422A8) y aclaraba el final de cada página */
 .footer::before { background: linear-gradient(180deg, transparent 0%, transparent 40%, rgba(14, 9, 64, 0.9) 100%) !important; }
-
-/* Mapas de cobertura (Inicio, Únete y Contacto): sin el negro de fondo.
-   El mosaico invertido se mezcla sobre índigo: las calles quedan claras y el fondo azul. */
-.mapa-circulo, .mapa-circulo.leaflet-container, .mc-mapa, .mc-mapa.leaflet-container, .mc-mapa-wrap { background: #3A2CC0 !important; }
-.mapa-circulo .leaflet-tile-pane, .mc-mapa .leaflet-tile-pane, .mapa-card .mapa-circulo .leaflet-tile-pane {
-  filter: grayscale(1) brightness(.6) contrast(3) !important;
-  mix-blend-mode: multiply; opacity: 1;
-}
