@@ -295,9 +295,9 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 }
 
 /* =====================================================================
-   Fondo: el degradado original con sus luces de colores
+   Fondo: degradado índigo oscuro, sin luces de colores
    ===================================================================== */
-/* Las luces de colores del fondo vuelven a verse (fondo original de la página) */
+.luces { display: none !important; }
 /* la trama de puntos queda solo como recurso en las tarjetas (no en el fondo) */
 
 /* =====================================================================
@@ -369,3 +369,18 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 
 /* Planeta solo (frontal): sube para ocupar la mitad del espacio vacío que quedaba sobre él */
 @media (max-width: 900px) { .hero-imagen { margin-top: -16px; } }
+
+/* =====================================================================
+   Fondo más oscuro y sereno en las 4 páginas: el índigo claro (#2B1FB0)
+   cansaba la vista. El tono más claro ahora es #19126A.
+   ===================================================================== */
+.fusion-fondo, .fusion-fondo-unete, .fusion-fondo-nosotros {
+  background: linear-gradient(180deg,
+    #1B1370 0%,
+    #130D55 12%,
+    #0F0A45 28%,
+    #150F5E 46%,
+    #19126A 60%,
+    #140E58 78%,
+    #0E0940 100%) !important;
+}
