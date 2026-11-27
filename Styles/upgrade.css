@@ -10,8 +10,7 @@
   --naranja: #FF8A1F;   /* tercer color de la marca: naranja (acento cálido) */
   --morado: #5A48D6;    /* antes morado: ahora el índigo claro de la marca */
 }
-.l2, .l6 { background: rgba(90, 72, 214, .5) !important; }
-.l3, .l5 { background: rgba(181, 219, 46, .22) !important; }
+/* luces con sus colores originales (verde, morado y naranja) */
 .hero-imagen::before { background: radial-gradient(circle, rgba(181, 219, 46, .18) 0%, rgba(90, 72, 214, .18) 40%, transparent 70%) !important; }
 
 /* ---------- Secciones visibles aunque falle el JavaScript ---------- */
@@ -296,9 +295,9 @@ html:not(.js) .reveal { opacity: 1 !important; transform: none !important; }
 }
 
 /* =====================================================================
-   Fondo: solo la trama de puntos (sin brillos de colores en las esquinas)
+   Fondo: el degradado original con sus luces de colores
    ===================================================================== */
-.luces { display: none !important; }
+/* Las luces de colores del fondo vuelven a verse (fondo original de la página) */
 /* la trama de puntos queda solo como recurso en las tarjetas (no en el fondo) */
 
 /* =====================================================================
